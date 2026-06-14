@@ -1,0 +1,23 @@
+{
+  "name": "kimiqb",
+  "version": "0.1.0",
+  "description": "KimiQB packages a repo-aware Kimi Code planning workflow with an existing-project autopsy, phase sub-plans, QA audit, and gated implementation handoff.",
+  "keywords": [
+    "kimi-code",
+    "planning",
+    "project-management",
+    "skills",
+    "repo-analysis"
+  ],
+  "author": "Alican Kiraz",
+  "homepage": "https://github.com/alicankiraz1/KimiQB",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "KimiQB",
+    "shortDescription": "Repo-aware planning workflow for Kimi Code",
+    "longDescription": "KimiQB helps Kimi Code inspect a repository, ask repo-aware intake questions, create a master project plan, autopsy existing project state, decompose the plan into phase-level sub-plans, audit the planning package for coverage and readiness, then print a gated implementation handoff when the audit allows it.",
+    "developerName": "Alican Kiraz",
+    "websiteURL": "https://github.com/alicankiraz1/KimiQB"
+  }
+}
