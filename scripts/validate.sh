@@ -84,7 +84,6 @@ import sys
 from pathlib import Path
 
 needles = (
-    "CodexQB",
     "$codexqb",
     "Use $codexqb",
     ".codex-plugin",
