@@ -114,6 +114,10 @@ python3 skills/kimiqb/scripts/validate_planner_docs.py --root /path/to/project -
 
 If the audit is `BLOCKED` or contains P0/P1 findings, repair the planning package first. If only P2/P3 warnings remain, the implementation prompt may be used but the warnings should stay visible.
 
+The implementation handoff tells Kimi Code to use relevant skills/plugins by scope, execute the READY/READY_WITH_WARNINGS queue continuously in small reversible slices, test before or with code changes, report exact blockers, avoid secrets, and limit token use by reading the audit/index first and only the active sub-plan afterward.
+
+Step 4 should not stop after the first successful slice. It should continue to the next acceptance criterion or next eligible sub-plan until the queue is complete or a stop gate is hit, such as a P0/P1 finding, failing test, missing source file, required credential/live approval, unsafe external mutation, unrelated dirty worktree, or token/context budget pressure.
+
 ## Direct Step Invocation
 
 You can invoke Step 2 or Step 3 directly:

@@ -98,6 +98,8 @@ When comparing an untracked generated file to another file, use
 
 - Do not load all phase sub-plans at once.
 - Read `Sub-Planing-Audit.md` and `Sub-Planing-Index.md` first.
-- Select one READY or READY_WITH_WARNINGS sub-plan.
-- Load only the selected sub-plan and the repo files needed for that slice.
+- Build an ordered queue from READY and READY_WITH_WARNINGS sub-plans.
+- Load only the active sub-plan and the repo files needed for the current slice.
+- Continue to the next acceptance criterion or next queued sub-plan after each verified slice.
 - Stop before implementation if audit contains P0/P1 findings.
+- Stop during implementation on explicit stop gates such as failing tests, missing required files, approval/credential/live-environment blockers, unsafe external mutations, unrelated dirty worktree, or token/context pressure.

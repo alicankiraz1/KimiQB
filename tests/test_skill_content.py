@@ -82,6 +82,14 @@ class SkillContentTests(unittest.TestCase):
         self.assertIn("Kimi Code", fourth)
         self.assertIn("continue using the audit", fourth)
 
+    def test_fourth_planner_runs_queue_continuously_with_stop_gates(self) -> None:
+        fourth = (SKILL_ROOT / "references/Fourth-Planner.md").read_text(encoding="utf-8")
+        self.assertIn("Build an ordered implementation queue", fourth)
+        self.assertIn("Execute the queue continuously", fourth)
+        self.assertIn("instead of stopping", fourth)
+        self.assertIn("Stop only when one of these stop gates is hit", fourth)
+        self.assertIn("token/context budget too low to continue safely", fourth)
+
 
 if __name__ == "__main__":
     unittest.main()
