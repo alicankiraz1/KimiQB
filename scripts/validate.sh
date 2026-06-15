@@ -17,6 +17,12 @@ required_files=(
   "skills/kimiqb/references/Fourth-Planner.md"
   "skills/kimiqb/references/repo-aware-intake.md"
   "skills/kimiqb/references/workflow-quality.md"
+  "skills/kimiqb/references/vibecoding-principles.md"
+  "skills/kimiqb/references/subagent-playbook.md"
+  "skills/kimiqb/references/planning-ledger.md"
+  "skills/kimiqb/references/project-ontology.md"
+  "skills/kimiqb/references/assessment-and-budget.md"
+  "skills/kimiqb/references/engineering-principles.md"
   "README.md"
   "docs/INSTALLATION.md"
   "docs/USAGE.md"
@@ -159,8 +165,49 @@ import re
 import subprocess
 import sys
 
-tracked = subprocess.run(["git", "ls-files", "-z"], check=True, capture_output=True).stdout
-paths = [Path(item.decode("utf-8")) for item in tracked.split(b"\0") if item]
+def in_git_checkout() -> bool:
+    return subprocess.run(
+        ["git", "rev-parse", "--is-inside-work-tree"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    ).returncode == 0
+
+
+def package_paths() -> list[Path]:
+    ignored_parts = {
+        ".git",
+        "__MACOSX",
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        "artifacts",
+        "build",
+        "dist",
+        "logs",
+        "tmp",
+    }
+    paths: list[Path] = []
+    for path in Path(".").rglob("*"):
+        if not path.is_file():
+            continue
+        if ignored_parts.intersection(path.parts):
+            continue
+        if path.name == ".DS_Store":
+            continue
+        paths.append(path)
+    return paths
+
+
+if in_git_checkout():
+    tracked = subprocess.run(["git", "ls-files", "-z"], check=True, capture_output=True).stdout
+    paths = [Path(item.decode("utf-8")) for item in tracked.split(b"\0") if item]
+    failure_label = "tracked_secret_hygiene_failed"
+else:
+    paths = package_paths()
+    failure_label = "package_secret_hygiene_failed"
+    print("package_secret_hygiene_mode=filesystem")
 
 secret_patterns = [
     ("openrouter_api_key", re.compile(r"\bsk-or-v1-[A-Za-z0-9_-]{20,}\b")),
@@ -198,7 +245,7 @@ for path in paths:
                 findings.append(f"{path}:{line_number}: openrouter_env_value")
 
 if findings:
-    print("tracked_secret_hygiene_failed")
+    print(failure_label)
     for finding in findings:
         print(finding)
     sys.exit(1)
@@ -206,28 +253,70 @@ PY
 
 python3 - <<'PY'
 import io
+from pathlib import Path
 import re
 import subprocess
 import sys
 import tarfile
 
-archive = subprocess.run(["git", "archive", "--format=tar", "HEAD"], check=True, capture_output=True).stdout
 bad = re.compile(
     r"(^|/)(\.git|__pycache__|\.env|artifacts|logs|tmp|__MACOSX)(/|$)"
     r"|\.pyc$|\.pem$|\.key$|\.local($|\.)"
 )
 
-with tarfile.open(fileobj=io.BytesIO(archive), mode="r:") as tar:
-    offenders = [member.name for member in tar.getmembers() if bad.search(member.name)]
+def in_git_checkout() -> bool:
+    return subprocess.run(
+        ["git", "rev-parse", "--is-inside-work-tree"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    ).returncode == 0
+
+
+def package_offenders() -> list[str]:
+    ignored_parts = {
+        ".git",
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        "build",
+        "dist",
+    }
+    offenders: list[str] = []
+    for path in Path(".").rglob("*"):
+        if not path.is_file():
+            continue
+        if ignored_parts.intersection(path.parts):
+            continue
+        rel = path.as_posix()
+        if bad.search(rel):
+            offenders.append(rel)
+    return offenders
+
+
+if in_git_checkout():
+    archive = subprocess.run(["git", "archive", "--format=tar", "HEAD"], check=True, capture_output=True).stdout
+    with tarfile.open(fileobj=io.BytesIO(archive), mode="r:") as tar:
+        offenders = [member.name for member in tar.getmembers() if bad.search(member.name)]
+    failure_label = "archive_hygiene_failed"
+else:
+    offenders = package_offenders()
+    failure_label = "package_hygiene_failed"
+    print("package_hygiene_mode=filesystem")
 
 if offenders:
-    print("archive_hygiene_failed")
+    print(failure_label)
     for offender in offenders:
         print(offender)
     sys.exit(1)
 PY
 
-python3 -m unittest discover -s tests -v
+if [[ "${KIMIQB_VALIDATE_SKIP_UNITTESTS:-0}" == "1" ]]; then
+  echo "unit_tests_skipped=1"
+else
+  python3 -m unittest discover -s tests -v
+fi
 
 if command -v kimi >/dev/null 2>&1; then
   kimi --version

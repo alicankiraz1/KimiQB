@@ -10,7 +10,15 @@ Run the default repository validation before every release:
 make check
 ```
 
-This checks the Kimi plugin manifest, required package files, Kimi skill frontmatter, stale public invocation names, and the Python unit test suite. It intentionally uses only shell and Python standard-library commands so CI does not depend on local Kimi internals.
+This checks the Kimi plugin manifest, required package files, Kimi skill frontmatter, stale public invocation names, tracked-file secret hygiene, archive hygiene, and the Python unit test suite. It intentionally uses only shell and Python standard-library commands so CI does not depend on local Kimi internals.
+
+When the repository has no `.git/` metadata, the same script switches to package-level filesystem checks and prints explicit mode labels:
+
+```bash
+KIMIQB_VALIDATE_SKIP_UNITTESTS=1 make check
+```
+
+Expected extracted-package output includes `package_secret_hygiene_mode=filesystem`, `package_hygiene_mode=filesystem`, and `unit_tests_skipped=1`. Use this only for package smoke tests where the `tests/` directory may be absent or intentionally skipped.
 
 ## Source Porting Policy
 
@@ -50,6 +58,7 @@ The skill ships a read-only validator for generated `Planner-docs/` outputs. Fro
 
 ```bash
 python3 skills/kimiqb/scripts/validate_planner_docs.py --root /path/to/project --mode step1
+python3 skills/kimiqb/scripts/validate_planner_docs.py --root /path/to/project --mode autopsy --strict
 python3 skills/kimiqb/scripts/validate_planner_docs.py --root /path/to/project --mode step2 --strict
 python3 skills/kimiqb/scripts/validate_planner_docs.py --root /path/to/project --mode step3 --strict
 python3 skills/kimiqb/scripts/validate_planner_docs.py --root /path/to/project --mode step4
@@ -63,6 +72,8 @@ When changing the validator, test at least:
 - a fake long secret token that should be detected;
 - roadmap table extraction with historical phase references such as `Faz 0B-10` or `Phase 11`;
 - optional `Autopsy.md` validation when present, and no failure when it is absent;
+- required `Autopsy.md` validation in `--mode autopsy`;
+- optional `Project-Ontology.md` and `Planing-Ledger.md` heading validation when present;
 - Step 4 readiness gating for missing audit, `BLOCKED`, `PASS`, `PASS_WITH_WARNINGS`, and prose such as `No P0/P1 findings`.
 
 Run the tracked validator test suite:
@@ -113,19 +124,31 @@ make export-sanitized
 
 This writes `KimiQB-sanitized.zip` with `git archive`.
 
+After exporting, smoke the zip without git metadata:
+
+```bash
+tmpdir="$(mktemp -d)"
+unzip -q KimiQB-sanitized.zip -d "$tmpdir"
+(cd "$tmpdir" && KIMIQB_VALIDATE_SKIP_UNITTESTS=1 make check)
+```
+
+The package-level fallback must not print secret values. It reports only path, line, and pattern name.
+
 ## Release Flow
 
 1. Update `kimi.plugin.json`.
 2. Update `skills/kimiqb/SKILL.md` and references as needed.
 3. Update `skills/kimiqb/references/repo-aware-intake.md` if Step 1 intake behavior changes.
-4. Update `skills/kimiqb/references/Autopsy-Planner.md` if Step 1.5 autopsy behavior changes.
-5. Update `skills/kimiqb/references/Fourth-Planner.md` if implementation handoff behavior changes.
-6. Update `skills/kimiqb/scripts/validate_planner_docs.py` if planner structure or readiness gates change.
-7. Run `make check`.
-8. If Kimi Code CLI is available, reinstall the local plugin and smoke `/skill:kimiqb`.
-9. Confirm the CodexQB source checkout is still clean.
-10. Commit with a focused message.
-11. Do not push, create a GitHub repository, publish a release, or install into a live shared environment unless explicitly requested.
+4. Update `skills/kimiqb/references/Autopsy-Planner.md` if Step 1.5 autopsy or ontology behavior changes.
+5. Update `skills/kimiqb/references/planning-ledger.md` and `skills/kimiqb/references/project-ontology.md` if continuity artifact requirements change.
+6. Update `skills/kimiqb/references/Fourth-Planner.md` if implementation handoff, queue continuation, subagent, stop-gate, or ledger behavior changes.
+7. Update `skills/kimiqb/scripts/validate_planner_docs.py` if planner structure, autopsy mode, optional continuity docs, or readiness gates change.
+8. Run `make check`.
+9. Run the extracted-package smoke check against `KimiQB-sanitized.zip`.
+10. If Kimi Code CLI is available, reinstall the local plugin and smoke `/skill:kimiqb`.
+11. Confirm the CodexQB source checkout is still clean.
+12. Commit with a focused message.
+13. Do not push, create a GitHub repository, publish a release, or install into a live shared environment unless explicitly requested.
 
 ## Contribution Guidelines
 
