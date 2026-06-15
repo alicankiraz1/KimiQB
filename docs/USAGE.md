@@ -2,6 +2,8 @@
 
 KimiQB runs a repo-aware planning workflow with an optional Step 1.5 Autopsy for existing projects.
 
+KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another body language. Required document headings remain English for validator stability.
+
 ## Step 1: Main Plan
 
 Open the project repository you want Kimi Code to analyze and ask:
@@ -48,9 +50,9 @@ Step 1.5 is skipped for empty or nearly empty repositories. In that case, `Autop
 After Step 1, KimiQB prints a text block for a new Kimi Code session. Copy it into a fresh session when you want long-running phase decomposition:
 
 ```text
-/skill:kimiqb Step 2'yi references/Second-Planner.md talimatlarına göre yürüt.
+/skill:kimiqb Run Step 2 according to references/Second-Planner.md.
 
-Planner-docs/Main-Planing.md dosyasındaki tüm ana fazları oku. Planner-docs/Autopsy.md varsa onu da destekleyici feedback kaynağı olarak tamamen oku ve alt faz planlarında dikkate al. Her faz için Planner-docs altında Faz-<n>-Plans klasörleri ve Faz<n>.<m>-*.md detaylı alt plan dosyaları oluştur. Tüm fazlar kapsanmadan durma. Sadece Planner-docs altında değişiklik yap.
+Read all main phases in Planner-docs/Main-Planing.md. If Planner-docs/Autopsy.md exists, read it fully as a supporting feedback source and account for it in the sub-phase plans. For each phase, create Faz-<n>-Plans folders and detailed Faz<n>.<m>-*.md sub-plan files under Planner-docs. Do not stop until all phases are covered. Modify only Planner-docs.
 ```
 
 Expected outputs:
@@ -75,9 +77,9 @@ python3 skills/kimiqb/scripts/validate_planner_docs.py --root /path/to/project -
 After Step 2, KimiQB prints another text block for a new Kimi Code session:
 
 ```text
-/skill:kimiqb Step 3'ü references/Third-Planner.md talimatlarına göre yürüt.
+/skill:kimiqb Run Step 3 according to references/Third-Planner.md.
 
-Planner-docs/Main-Planing.md, Planner-docs/Sub-Planing-Index.md ve Planner-docs/Faz-*-Plans/*.md dosyalarını denetle. Ana faz coverage, dosya isimlendirme, sıralama, zorunlu bölüm yapısı, index tutarlılığı, içerik kalitesi, scope drift, readiness gerçekçiliği, güvenlik/governance ve Step 4 hazırlığını analiz et. Hiçbir plan dosyasını düzeltme; yalnızca Planner-docs/Sub-Planing-Audit.md raporunu üret. Tüm fazlar ve alt planlar incelenmeden durma.
+Audit Planner-docs/Main-Planing.md, Planner-docs/Sub-Planing-Index.md, and Planner-docs/Faz-*-Plans/*.md. Analyze main-phase coverage, file naming, sequencing, required section structure, index consistency, content quality, scope drift, readiness realism, security/governance, and Step 4 readiness. Do not fix any plan files; produce only Planner-docs/Sub-Planing-Audit.md. Do not stop until all phases and sub-plans have been reviewed.
 ```
 
 Expected output:

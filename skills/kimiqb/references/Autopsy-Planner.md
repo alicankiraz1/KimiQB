@@ -81,7 +81,7 @@ Create or update:
 
 Planner-docs/Autopsy.md
 
-The document must be written in Turkish.
+The document body is English by default unless the user explicitly requests another body language. Required document headings remain English for validator stability.
 
 Use clear headings and a professional engineering-audit tone.
 
@@ -89,7 +89,7 @@ The file must include exactly these top-level sections, in this order:
 
 # Project Autopsy
 
-## 1. Yönetici Özeti
+## 1. Executive Summary
 
 Summarize the autopsy findings in 5-10 concise paragraphs.
 
@@ -100,7 +100,7 @@ Include:
 - the most important technical gaps;
 - the most important planning implication for Step 2.
 
-## 2. İncelenen Kaynaklar
+## 2. Reviewed Sources
 
 List the commands run and files/directories inspected.
 
@@ -112,7 +112,7 @@ Include:
 - service/package folders;
 - any relevant Planner-docs files.
 
-## 3. Proje Bölümleri ve Sorumluluk Alanları
+## 3. Project Areas and Ownership Boundaries
 
 Map observed project areas/modules.
 
@@ -122,7 +122,7 @@ For each area include:
 - maturity/readiness signal;
 - unclear ownership or boundary issues.
 
-## 4. Feature Envanteri
+## 4. Feature Inventory
 
 Summarize implemented, partial, planned, and missing features.
 
@@ -132,7 +132,7 @@ Use evidence categories:
 - planned but not evidenced;
 - missing or unclear.
 
-## 5. Placeholder, Stub ve Skeleton Analizi
+## 5. Placeholder, Stub, and Skeleton Analysis
 
 Report placeholder/stub/skeleton indicators.
 
@@ -141,7 +141,7 @@ Include:
 - whether the indicator appears harmless, test-only, or delivery-blocking;
 - how Step 2 should plan remediation.
 
-## 6. Teknik Borç ve Bakım Riskleri
+## 6. Technical Debt and Maintenance Risks
 
 Analyze technical debt.
 
@@ -153,7 +153,7 @@ Include:
 - weak error handling or lifecycle state;
 - stale docs or contradictory planning assumptions.
 
-## 7. Hatalı veya Eksik Entegrasyonlar
+## 7. Broken or Missing Integrations
 
 Analyze integrations.
 
@@ -165,7 +165,7 @@ Include:
 - CI/deployment/infrastructure;
 - missing adapters or mismatched contracts.
 
-## 8. Test, CI ve Doğrulama Açıkları
+## 8. Test, CI, and Validation Gaps
 
 Analyze validation posture.
 
@@ -176,7 +176,7 @@ Include:
 - local vs live validation gaps;
 - suggested validation gates for Step 2 sub-plans.
 
-## 9. Güvenlik, Secret ve Governance Bulguları
+## 9. Security, Secret, and Governance Findings
 
 Analyze security and governance.
 
@@ -188,7 +188,7 @@ Include:
 - risky command execution or external mutation surfaces;
 - compliance or governance unknowns.
 
-## 10. Operasyonel Readiness ve Gözlemlenebilirlik
+## 10. Operational Readiness and Observability
 
 Analyze operational readiness.
 
@@ -199,7 +199,7 @@ Include:
 - cost/latency/quality signals if relevant;
 - live readiness blockers.
 
-## 11. Ana Planla Uyumluluk Analizi
+## 11. Alignment Analysis with the Main Plan
 
 Compare the repository evidence against Planner-docs/Main-Planing.md.
 
@@ -209,7 +209,7 @@ Include:
 - roadmap phases that need stronger evidence;
 - risks Step 2 must not ignore.
 
-## 12. Step 2 İçin Autopsy Feedbackleri
+## 12. Autopsy Feedback for Step 2
 
 Provide direct feedback for Step 2.
 
@@ -220,15 +220,15 @@ Each bullet should explain:
 - which Autopsy finding supports it;
 - which type of sub-plan should include it.
 
-## 13. Öncelikli Düzeltme ve Planlama Sinyalleri
+## 13. Priority Fix and Planning Signals
 
 List prioritized signals.
 
 Use this format:
 - AUTOPSY-P0-01 — <title>
-  - Etki: <why this matters>
-  - Kanıt: <file/path or repo evidence, redacted if sensitive>
-  - Step 2 etkisi: <how sub-plans should account for it>
+  - Impact: <why this matters>
+  - Evidence: <file/path or repo evidence, redacted if sensitive>
+  - Step 2 impact: <how sub-plans should account for it>
 
 Use priorities:
 - P0: blocks reliable planning or safe implementation;
@@ -263,7 +263,7 @@ After creating/updating Planner-docs/Autopsy.md:
 
 Final response requirements:
 
-After completion, provide a concise final summary in Turkish.
+After completion, provide a concise final summary using the same language contract: English by default unless the user explicitly requests another body language, with required artifact headings kept in English.
 
 Include:
 - whether Step 1.5 succeeded, was skipped, or was blocked;

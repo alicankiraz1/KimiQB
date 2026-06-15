@@ -15,7 +15,7 @@ If this repository is private, installation only works for users and machines th
 Open Kimi Code in any project and run:
 
 ```text
-/plugins install /Users/alicankiraz/Desktop/BillionDollarsIdeas/KimiQB
+/plugins install /path/to/KimiQB
 /plugins info kimiqb
 /plugins reload
 /new
@@ -49,7 +49,7 @@ Then test:
 Kimi Code copies installed plugins to `$KIMI_CODE_HOME/plugins/managed/<id>/`. Editing this source checkout after installation does not update the installed plugin. Reinstall KimiQB after source changes:
 
 ```text
-/plugins install /Users/alicankiraz/Desktop/BillionDollarsIdeas/KimiQB
+/plugins install /path/to/KimiQB
 /plugins reload
 /new
 ```

@@ -131,7 +131,7 @@ Create or update:
 
 Planner-docs/Main-Planing.md
 
-The document must be written in Turkish.
+The document body is English by default unless the user explicitly requests another body language. Required document headings remain English for validator stability.
 
 Use clear headings and a professional engineering-planning tone.
 
@@ -139,7 +139,7 @@ The file must include exactly these top-level sections, in this order:
 
 # Main Planing
 
-## 1. Yönetici Özeti
+## 1. Executive Summary
 
 Summarize the project in 5-10 concise paragraphs.
 
@@ -151,7 +151,7 @@ Explain:
 - the main planning conclusion;
 - the most important next milestone.
 
-## 2. Proje Vizyonu
+## 2. Project Vision
 
 Describe the long-term vision.
 
@@ -162,7 +162,7 @@ Include:
 - what the project should make possible when finished;
 - what must never be compromised.
 
-## 3. Mevcut Durum Analizi
+## 3. Current State Analysis
 
 Analyze the repository as it exists now.
 
@@ -181,7 +181,7 @@ If evidence is unavailable, say so explicitly.
 
 Be objective. Do not overstate readiness.
 
-## 4. Hedef Son Durum
+## 4. Target End State
 
 Describe the desired final state.
 
@@ -195,7 +195,7 @@ Include:
 
 Make this concrete enough that later phases can be derived from it.
 
-## 5. Mimari Yön ve Ana Kararlar
+## 5. Architecture Direction and Key Decisions
 
 Describe the recommended architectural direction.
 
@@ -217,17 +217,17 @@ For projects that are not agentic systems, adapt these concepts to the project�
 - UI/API boundaries;
 - security and operational controls.
 
-## 6. Fazlara Bölünmüş Ana Yol Haritası
+## 6. Phase-Based Master Roadmap
 
 Create a rough phase roadmap from the current state to the target end-state.
 
 Do not over-detail. Each phase should have:
-- Faz adı
-- Hedef
-- Açıklama
-- Varmak istenen nokta
-- Yaklaşık olgunluk seviyesi, using M0-M7 where useful
-- Ana kabul sinyalleri
+- Phase name
+- Goal
+- Description
+- Desired end state
+- Approximate maturity level, using M0-M7 where useful
+- Main acceptance signals
 
 Use a table if helpful, but keep each phase readable.
 
@@ -244,7 +244,7 @@ For a new project:
 Prefer 6-12 major phases.
 Do not create 30 tiny phases.
 
-## 7. Kritik Riskler ve Açıklar
+## 7. Critical Risks and Gaps
 
 List the most important risks.
 
@@ -258,7 +258,7 @@ Include security, architecture, delivery, operational, dependency, testing, and 
 
 Be direct. Do not soften serious issues.
 
-## 8. Önceliklendirilmiş Sonraki Adımlar
+## 8. Prioritized Next Steps
 
 List the next 5-10 concrete actions after this Step 1 plan.
 
@@ -268,7 +268,7 @@ Each action should be high leverage.
 
 Do not assign exact dates unless the repository already contains a timeline.
 
-## 9. Step 2 İçin Hazırlık Notları
+## 9. Step 2 Preparation Notes
 
 Explain how Step 2 should proceed.
 
@@ -280,7 +280,7 @@ Include:
 - what evidence Step 2 should collect;
 - what decisions need human confirmation before detailed implementation.
 
-## 10. Repo İnceleme Notları
+## 10. Repository Review Notes
 
 Include a concise evidence log.
 
@@ -325,7 +325,7 @@ Validation after writing:
 After creating/updating Planner-docs/Main-Planing.md:
 1. Read the file back.
 2. Check that all required top-level sections exist.
-3. Check that the document is in Turkish.
+3. Check that the document follows the language contract: English by default unless the user explicitly requests another body language, with required headings in English.
 4. Check that it does not contain secrets.
 5. Run git diff -- Planner-docs/Main-Planing.md and review the diff.
 6. Provide a final concise summary of:

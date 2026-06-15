@@ -4,6 +4,8 @@
 
 KimiQB installs the `/skill:kimiqb` skill for Kimi Code CLI. It is built for software, AI, infrastructure, security, and automation projects where planning must be evidence-backed, reviewable, and ready for step-by-step execution.
 
+KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another body language. Required document headings remain English for validator stability.
+
 ## Why KimiQB
 
 - **Repo-aware intake:** KimiQB inspects the current repository before asking questions, then proposes evidence-backed defaults for project name, intent, target end state, and constraints.
@@ -30,7 +32,7 @@ Step 1 can run in the current Kimi Code session. Steps 2, 3, and 4 are intention
 Install from a local checkout inside Kimi Code:
 
 ```text
-/plugins install /Users/alicankiraz/Desktop/BillionDollarsIdeas/KimiQB
+/plugins install /path/to/KimiQB
 /plugins reload
 /new
 ```

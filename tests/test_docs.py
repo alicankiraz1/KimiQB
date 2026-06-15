@@ -26,7 +26,7 @@ class DocumentationTests(unittest.TestCase):
     def test_installation_docs_include_supported_kimi_commands(self) -> None:
         install = (REPO_ROOT / "docs/INSTALLATION.md").read_text(encoding="utf-8")
         for command in [
-            "/plugins install /Users/alicankiraz/Desktop/BillionDollarsIdeas/KimiQB",
+            "/plugins install /path/to/KimiQB",
             "/plugins install https://github.com/alicankiraz1/KimiQB",
             "/plugins info kimiqb",
             "/plugins reload",
@@ -34,6 +34,24 @@ class DocumentationTests(unittest.TestCase):
             "/skill:kimiqb",
         ]:
             self.assertIn(command, install)
+
+    def test_public_docs_use_english_language_contract_and_no_personal_paths(self) -> None:
+        docs = [
+            REPO_ROOT / "README.md",
+            REPO_ROOT / "docs/INSTALLATION.md",
+            REPO_ROOT / "docs/USAGE.md",
+            REPO_ROOT / "docs/MAINTAINING.md",
+        ]
+        for path in docs:
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn("/Users/" + "alicankiraz", text, path)
+            self.assertNotIn("Step 2'yi", text, path)
+            self.assertNotIn("Turkish Step 3 handoff wording", text, path)
+
+        for path in [REPO_ROOT / "README.md", REPO_ROOT / "docs/USAGE.md"]:
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("Generated Planner-docs artifacts are English by default", text, path)
+            self.assertIn("Required document headings remain English", text, path)
 
     def test_maintaining_docs_include_release_validation(self) -> None:
         maintaining = (REPO_ROOT / "docs/MAINTAINING.md").read_text(encoding="utf-8")

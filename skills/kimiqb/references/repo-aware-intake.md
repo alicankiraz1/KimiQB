@@ -68,115 +68,115 @@ Do not treat inferred values as final until the user confirms or edits them.
 Start with a short setup sentence:
 
 ```text
-Önce 4 kısa soruyu tek tek soracağım. Soruları depoda gördüğüm kanıtlara göre zenginleştireceğim; cevaplarından sonra ana planı üreteceğim.
+I will ask four short questions one by one. I will enrich the questions with evidence I saw in the repository; after your answers, I will generate the main plan.
 ```
 
-Translate this sentence to the user's language when the user is not writing in Turkish.
+Translate this sentence to the user's language when the user is not writing in English.
 
-### Soru 1 / 4 - PROJECT_NAME
+### Question 1 / 4 - PROJECT_NAME
 
 Use this shape:
 
 ```text
-Soru 1 / 4 - PROJECT_NAME (Proje Adı)
+Question 1 / 4 - PROJECT_NAME (Project Name)
 
-Bu planın hangi proje için hazırlanacağını netleştirelim.
+Let's clarify which project this plan is for.
 
-Depoda gördüğüm kadarıyla bu proje "<inferred name>" gibi görünüyor. Kanıt: <short evidence such as README title, package name, or repo folder>.
+Based on what I saw in the repository, this project appears to be "<inferred name>". Evidence: <short evidence such as README title, package name, or repo folder>.
 
-Proje adını "<inferred name>" olarak alabilir miyim, yoksa farklı/resmi bir ad mı kullanmamı istersin?
+Should I use "<inferred name>" as the project name, or should I use a different official name?
 ```
 
 If evidence is weak:
 
 ```text
-Soru 1 / 4 - PROJECT_NAME (Proje Adı)
+Question 1 / 4 - PROJECT_NAME (Project Name)
 
-Repo kanıtı sınırlı, bu yüzden proje adını senden netleştirmem gerekiyor.
+Repository evidence is limited, so I need you to clarify the project name.
 
-Bu plan hangi proje adıyla hazırlanmalı?
+Which project name should this plan use?
 ```
 
 After the answer, confirm:
 
 ```text
-PROJECT_NAME = "<final value>" olarak kaydedildi.
+PROJECT_NAME = "<final value>" has been saved.
 ```
 
-### Soru 2 / 4 - PROJECT_INTENT
+### Question 2 / 4 - PROJECT_INTENT
 
 Use this shape:
 
 ```text
-Soru 2 / 4 - PROJECT_INTENT (Projenin Amacı)
+Question 2 / 4 - PROJECT_INTENT (Project Purpose)
 
-Bu alan, projenin ne için var olduğunu ve neye dönüşmek istediğini açıklar.
+This field explains why the project exists and what it is trying to become.
 
-Depodan çıkardığım taslak şu:
+Here is the draft I inferred from the repository:
 
 <1-2 concise paragraphs describing inferred intent, components, target users, and direction.>
 
-Sorular:
+Questions:
 
-1. Bu tanım doğru mu, yoksa düzeltmek/eklemek istediğin noktalar var mı?
-2. Projenin dönüşmek istediği nihai hedef nedir?
+1. Is this description correct, or are there points you want to correct or add?
+2. What is the final target this project is trying to reach?
 
-Kısa birkaç cümleyle yazabilirsin; ben bunu plana profesyonelce işleyeceğim.
+You can answer in a few short sentences; I will turn it into professional plan text.
 ```
 
 After the answer, confirm the stored value in one sentence:
 
 ```text
-PROJECT_INTENT kaydedildi: <brief normalized summary>.
+PROJECT_INTENT saved: <brief normalized summary>.
 ```
 
-### Soru 3 / 4 - TARGET_END_STATE
+### Question 3 / 4 - TARGET_END_STATE
 
 Use this shape:
 
 ```text
-Soru 3 / 4 - TARGET_END_STATE (Hedef Son Durum / "Bitti" Tanımı)
+Question 3 / 4 - TARGET_END_STATE (Target End State / Definition of Done)
 
-"Done" tanımını beş açıdan netleştirmek istiyorum. Depo kanıtına göre hazırladığım taslak:
+I want to clarify the definition of done from five angles. Here is the draft I prepared from repository evidence:
 
-- Ürün: <product outcome>
-- Mühendislik: <engineering outcome>
-- Operasyon: <operations outcome>
-- Güvenlik: <security outcome>
-- Kullanıcı değeri: <user-value outcome>
+- Product: <product outcome>
+- Engineering: <engineering outcome>
+- Operations: <operations outcome>
+- Security: <security outcome>
+- User value: <user-value outcome>
 
-Bu beş boyut senin "bitti" tanımını yansıtıyor mu? Eklemek, çıkarmak veya değiştirmek istediğin bir şey var mı?
+Do these five dimensions reflect your definition of done? Is there anything you want to add, remove, or change?
 ```
 
 After the answer, confirm:
 
 ```text
-TARGET_END_STATE kaydedildi: <brief normalized summary>.
+TARGET_END_STATE saved: <brief normalized summary>.
 ```
 
-### Soru 4 / 4 - KNOWN_CONSTRAINTS
+### Question 4 / 4 - KNOWN_CONSTRAINTS
 
 Use this shape:
 
 ```text
-Soru 4 / 4 - KNOWN_CONSTRAINTS (Bilinen Kısıtlar)
+Question 4 / 4 - KNOWN_CONSTRAINTS (Known Constraints)
 
-Depodan gördüğüm veya henüz net olmayan kısıt taslağı:
+Here is the constraint draft I saw in the repository or could not yet confirm:
 
-- Stack/araçlar: <detected stack or unknown>
-- Operasyon/infra: <detected deployment/runtime or unknown>
-- Test/doğrulama: <detected commands or unknown>
-- Güvenlik/compliance: <detected boundaries or unknown>
-- Zaman/ekip/bütçe: <known if present, otherwise unknown>
+- Stack/tools: <detected stack or unknown>
+- Operations/infra: <detected deployment/runtime or unknown>
+- Test/validation: <detected commands or unknown>
+- Security/compliance: <detected boundaries or unknown>
+- Time/team/budget: <known if present, otherwise unknown>
 - Must-use / must-not-use: <known if present, otherwise unknown>
 
-Bu listeye eklemem, düzeltmem veya özellikle kaçınmam gereken bir şey var mı?
+Is there anything I should add, correct, or specifically avoid in this list?
 ```
 
 After the answer, confirm:
 
 ```text
-KNOWN_CONSTRAINTS kaydedildi: <brief normalized summary>.
+KNOWN_CONSTRAINTS saved: <brief normalized summary>.
 ```
 
 ## After Intake

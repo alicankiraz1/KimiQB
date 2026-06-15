@@ -17,13 +17,13 @@ This checks the Kimi plugin manifest, required package files, Kimi skill frontma
 CodexQB source is read-only for this repository. The adapter script may read from the local CodexQB checkout:
 
 ```text
-/Users/alicankiraz/Desktop/BillionDollarsIdeas/CodexQB
+/path/to/CodexQB
 ```
 
 It must write only inside the KimiQB checkout. Confirm this after adapter runs:
 
 ```bash
-git -C /Users/alicankiraz/Desktop/BillionDollarsIdeas/CodexQB status --short
+git -C /path/to/CodexQB status --short
 ```
 
 Expected output is empty.
@@ -63,7 +63,7 @@ When changing the validator, test at least:
 - a fake long secret token that should be detected;
 - roadmap table extraction with historical phase references such as `Faz 0B-10` or `Phase 11`;
 - optional `Autopsy.md` validation when present, and no failure when it is absent;
-- Step 4 readiness gating for missing audit, `BLOCKED`, `PASS`, `PASS_WITH_WARNINGS`, and prose such as `P0/P1 bulgusu yok`.
+- Step 4 readiness gating for missing audit, `BLOCKED`, `PASS`, `PASS_WITH_WARNINGS`, and prose such as `No P0/P1 findings`.
 
 Run the tracked validator test suite:
 
@@ -82,14 +82,14 @@ kimi --version
 Inside Kimi Code:
 
 ```text
-/plugins install /Users/alicankiraz/Desktop/BillionDollarsIdeas/KimiQB
+/plugins install /path/to/KimiQB
 /plugins info kimiqb
 /plugins reload
 /new
 /skill:kimiqb inspect this repo and plan this project
 ```
 
-Expected behavior: the plugin is installed, `/plugins info kimiqb` shows manifest metadata, and the skill starts by scanning the repo and asking `Soru 1 / 4 - PROJECT_NAME`.
+Expected behavior: the plugin is installed, `/plugins info kimiqb` shows manifest metadata, and the skill starts by scanning the repo and asking `Question 1 / 4 - PROJECT_NAME`.
 
 ## Check For Stale Invocation Names
 

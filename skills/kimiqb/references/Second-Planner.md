@@ -73,7 +73,7 @@ Planner-docs/
 
 If Main-Planing.md starts phases from Faz 1, start with Faz-1-Plans.
 If Main-Planing.md includes Faz 0, create Faz-0-Plans.
-If Main-Planing.md uses a different naming style such as “Phase 1”, “Aşama 1”, or “Faz 1”, normalize generated folder names as:
+If Main-Planing.md uses a different naming style such as "Phase 1", "Stage 1", or "Faz 1", normalize generated folder names as:
 Faz-<number>-Plans
 
 For sub-plan filenames, use:
@@ -88,13 +88,13 @@ Faz2.2-persistent-db-schema.md
 Filename rules:
 - Use ASCII-only lowercase slugs.
 - Do not use spaces.
-- Do not use Turkish characters in filenames.
+- Do not use non-ASCII characters in filenames.
 - Keep slugs short but meaningful.
 - Do not create duplicate filenames.
 - If rerunning this prompt, update existing matching files instead of creating duplicates.
 
 Language:
-All generated planning documents must be written in Turkish.
+Generated planning documents are English by default unless the user explicitly requests another body language. Required document headings remain English for validator stability.
 
 Planning depth:
 This step should be more detailed than Main-Planing.md, but it is still a planning task.
@@ -123,7 +123,7 @@ Run only safe read-only commands such as:
 - inspect pyproject.toml, package.json, Makefile, docker-compose files, CI workflow files, docs indexes, architecture docs, runbooks, test files, config examples, service skeletons, package skeletons, and policy files if present
 
 You may use ripgrep/grep for discovery:
-- rg "Faz|Phase|Aşama|roadmap|plan|architecture|maturity|readiness|activation|production|security|policy|worker|scheduler|gateway|adapter|test|smoke|CI|API|database|Postgres|queue|artifact|approval|review|risk|acceptance|Linear|GitHub|Temporal|LangGraph|LiteLLM|Codex|OpenCode|Claude|Gemini" . --glob '!.git/**' --glob '!node_modules/**' --glob '!.venv/**' --glob '!dist/**' --glob '!build/**' --glob '!artifacts/**'
+- rg "Faz|Phase|Stage|roadmap|plan|architecture|maturity|readiness|activation|production|security|policy|worker|scheduler|gateway|adapter|test|smoke|CI|API|database|Postgres|queue|artifact|approval|review|risk|acceptance|Linear|GitHub|Temporal|LangGraph|LiteLLM|Codex|OpenCode|Claude|Gemini" . --glob '!.git/**' --glob '!node_modules/**' --glob '!.venv/**' --glob '!dist/**' --glob '!build/**' --glob '!artifacts/**'
 
 If Planner-docs/Main-Planing.md is missing:
 - Do not attempt full Step 2 decomposition.
@@ -197,7 +197,7 @@ For each sub-plan file, use exactly this top-level structure:
 
 # Faz X.Y — <Sub-Phase Title>
 
-## 1. Bağlam
+## 1. Context
 
 Explain how this sub-phase connects to:
 - the main project vision;
@@ -207,7 +207,7 @@ Explain how this sub-phase connects to:
 
 Be specific and grounded in repository evidence where possible.
 
-## 2. Hedef
+## 2. Goal
 
 State the goal of this sub-phase.
 
@@ -219,7 +219,7 @@ Bad:
 Good:
 “Define a persistent task/lease/attempt state model that allows worker execution to survive process restarts.”
 
-## 3. Açıklama
+## 3. Description
 
 Describe what will be planned or built in this sub-phase.
 
@@ -229,7 +229,7 @@ Include:
 - how it reduces project risk;
 - how it prepares later phases.
 
-## 4. Kapsam
+## 4. Scope
 
 List what is included.
 
@@ -251,7 +251,7 @@ Include likely areas such as:
 - integrations;
 only where relevant.
 
-## 5. Kapsam Dışı
+## 5. Out of Scope
 
 List what is explicitly not included.
 
@@ -268,7 +268,7 @@ Examples:
 - secret handling beyond preflight;
 only where relevant.
 
-## 6. Mevcut Repo Kanıtı
+## 6. Current Repository Evidence
 
 Summarize repository evidence relevant to this sub-phase.
 
@@ -281,11 +281,11 @@ Include:
 - relevant Autopsy.md findings when available.
 
 If no evidence exists, say:
-“Bu alt faz için mevcut repo kanıtı sınırlı.”
+"Current repository evidence is limited for this sub-phase."
 
 Do not invent evidence.
 
-## 7. Planlanan İş Kırılımı
+## 7. Planned Work Breakdown
 
 Create a detailed but not code-level work breakdown.
 
@@ -296,9 +296,9 @@ Each item should include:
 - expected output
 
 Example:
-- F2.3-01 — Task state schema netleştirme
-  - Açıklama: ASF task lifecycle durumlarını queued/running/review/completed/failed/cancelled olarak tanımlar.
-  - Çıktı: schema dokümanı, DB model taslağı, lifecycle state diagram notu.
+- F2.3-01 — Clarify the task state schema
+  - Description: Defines ASF task lifecycle states as queued/running/review/completed/failed/cancelled.
+  - Output: schema document, DB model draft, lifecycle state diagram note.
 
 Do not create implementation code.
 
@@ -308,20 +308,20 @@ When Autopsy.md exists, include relevant Autopsy feedback in the work breakdown.
 - plan integration contract repair before live activation;
 - prioritize security/governance gaps before risky automation.
 
-## 8. Kabul Kriterleri
+## 8. Acceptance Criteria
 
 Define concrete acceptance criteria.
 
 Acceptance criteria must be verifiable.
 
 Examples:
-- “Planner-docs/Faz-2-Plans/Faz2.1-api-contracts.md içinde endpoint listesi, request/response taslakları ve auth varsayımları yer alır.”
-- “API implementation yoksa bu açıkça belirtilir.”
-- “Local readiness ve live readiness ayrı değerlendirilir.”
-- “Secret değerleri plan dosyalarına yazılmaz.”
-- “Autopsy bulgusu ilgiliyse kabul kriteri, bu bulgunun kapatıldığını veya bilinçli ertelendiğini doğrular.”
+- "Planner-docs/Faz-2-Plans/Faz2.1-api-contracts.md includes the endpoint list, request/response drafts, and auth assumptions."
+- "If no API implementation exists, that is stated clearly."
+- "Local readiness and live readiness are evaluated separately."
+- "Secret values are not written into planning files."
+- "When an Autopsy finding is relevant, the acceptance criterion verifies that the finding is closed or intentionally deferred."
 
-## 9. Doğrulama ve Test Yaklaşımı
+## 9. Validation and Test Approach
 
 Describe how this sub-phase should be validated later.
 
@@ -342,7 +342,7 @@ Distinguish:
 - security validation;
 - artifact validation.
 
-## 10. Bağımlılıklar ve Sıralama
+## 10. Dependencies and Sequencing
 
 Describe dependencies.
 
@@ -355,7 +355,7 @@ Include:
 
 Be explicit about what blocks implementation.
 
-## 11. Riskler ve Önlemler
+## 11. Risks and Mitigations
 
 List risks specific to this sub-phase.
 
@@ -368,21 +368,21 @@ When Autopsy.md exists, include Autopsy P0/P1/P2 signals that materially affect 
 
 Be direct.
 
-## 12. Varmak İstenen Nokta
+## 12. Desired End State
 
 Describe the desired end state after this sub-phase is completed.
 
 This should be concrete enough that an implementer can understand what “done” means.
 
-## 13. Sonraki Alt Faza Geçiş Kriteri
+## 13. Next Sub-Phase Transition Criteria
 
 Define what must be true before moving to the next sub-phase.
 
 Examples:
-- “Ana kararlar yazılı ve çelişkisiz olmalı.”
-- “Local validation komutları geçmeli.”
-- “Live credential gerektiren işler henüz aktive edilmemiş olmalı.”
-- “Artifact contract tamamlanmadan worker activation’a geçilmemeli.”
+- "Key decisions are written down and internally consistent."
+- "Local validation commands pass."
+- "Work requiring live credentials has not been activated yet."
+- "Worker activation does not begin before the artifact contract is complete."
 
 Index file requirements:
 
@@ -394,11 +394,11 @@ This file must include:
 
 # Sub-Planing Index
 
-## 1. Amaç
+## 1. Purpose
 
 Explain that this index maps Main-Planing.md phases to detailed sub-plan files.
 
-## 2. Kaynak Ana Plan
+## 2. Source Main Plan
 
 Reference:
 Planner-docs/Main-Planing.md
@@ -408,11 +408,11 @@ Include:
 - detected phase names;
 - any ambiguity or inconsistency found.
 
-Also include an "Autopsy Kaynağı" note:
+Also include an "Autopsy Source" note:
 - If Planner-docs/Autopsy.md exists, state that it was read and summarize the most important Step 2 feedback categories.
 - If it does not exist, state that Step 2 continued without Autopsy input.
 
-## 3. Faz ve Alt Plan Haritası
+## 3. Phase and Sub-Plan Map
 
 For each phase:
 - phase number;
@@ -424,7 +424,7 @@ For each phase:
 
 Use a table or nested list.
 
-## 4. Öncelikli Detaylandırma Sırası
+## 4. Priority Detailing Order
 
 Explain which sub-plans should be executed first and why.
 
@@ -438,21 +438,21 @@ Prioritize:
 - observability and production readiness;
 adapted to the project domain.
 
-## 5. Kapsam Dışı Bırakılan veya Ertelenen Konular
+## 5. Out-of-Scope or Deferred Topics
 
 List topics that should not be expanded yet because they depend on unresolved decisions or future evidence.
 
-## 6. Coverage Kontrolü
+## 6. Coverage Check
 
 Include a checklist proving:
 - every main phase from Main-Planing.md has a folder;
 - every main phase has at least one sub-plan;
 - sub-plan filenames follow the naming convention;
-- generated docs are in Turkish;
+- generated docs follow the language contract;
 - no source code files were modified;
 - no secrets were written.
 
-## 7. Repo İnceleme Notları
+## 7. Repository Review Notes
 
 Include:
 - commands run;
@@ -528,7 +528,7 @@ A. Success:
 - every phase has at least one FazX.Y-*.md sub-plan;
 - every sub-plan uses the required section structure;
 - the bundled validator passes, or equivalent all-file validation has been completed and reported;
-- all generated content is Turkish;
+- all generated content follows the language contract;
 - no files outside Planner-docs/ were modified;
 - git diff confirms only Planner-docs/ changes.
 
@@ -588,7 +588,7 @@ After generating all files:
 
 Final response requirements:
 
-After completion, provide a concise final summary in Turkish.
+After completion, provide a concise final summary using the same language contract: English by default unless the user explicitly requests another body language, with required artifact headings kept in English.
 
 Include:
 - whether Step 2 succeeded or was blocked;
@@ -600,12 +600,12 @@ Include:
 - the recommended first sub-plan to execute next;
 - any blockers, ambiguities, or assumptions;
 - confirmation that only Planner-docs/ was modified, or explicitly list any unexpected modifications.
-- the Step 3 handoff text below, so the user can copy it into a new Kimi Code session:
+- the Step 3 handoff text below, so the user can copy it into new Kimi Code session:
 
 ```text
-/skill:kimiqb Step 3'ü references/Third-Planner.md talimatlarına göre yürüt.
+/skill:kimiqb Run Step 3 according to references/Third-Planner.md.
 
-Planner-docs/Main-Planing.md, Planner-docs/Sub-Planing-Index.md ve Planner-docs/Faz-*-Plans/*.md dosyalarını denetle. Ana faz coverage, dosya isimlendirme, sıralama, zorunlu bölüm yapısı, index tutarlılığı, içerik kalitesi, scope drift, readiness gerçekçiliği, güvenlik/governance ve Step 4 hazırlığını analiz et. Hiçbir plan dosyasını düzeltme; yalnızca Planner-docs/Sub-Planing-Audit.md raporunu üret. Tüm fazlar ve alt planlar incelenmeden durma.
+Audit Planner-docs/Main-Planing.md, Planner-docs/Sub-Planing-Index.md, and Planner-docs/Faz-*-Plans/*.md. Analyze main-phase coverage, file naming, sequencing, required section structure, index consistency, content quality, scope drift, readiness realism, security/governance, and Step 4 readiness. Do not fix any plan files; produce only Planner-docs/Sub-Planing-Audit.md. Do not stop until all phases and sub-plans have been reviewed.
 ```
 
 Remember:

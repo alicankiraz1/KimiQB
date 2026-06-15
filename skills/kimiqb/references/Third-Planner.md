@@ -63,7 +63,7 @@ If available, read this only after the audit is written and Step 4 readiness is 
 references/Fourth-Planner.md
 
 Language:
-Write Planner-docs/Sub-Planing-Audit.md in Turkish.
+Write Planner-docs/Sub-Planing-Audit.md in English by default unless the user explicitly requests another body language. Required document headings remain English for validator stability.
 
 Repository inspection requirements:
 
@@ -81,8 +81,8 @@ Run only safe read-only commands such as:
 - grep/ripgrep commands for headings and phase markers
 
 Useful discovery commands:
-- rg "^#|^##|Faz|Phase|Aşama|Olgunluk|Kabul|Risk|Bağımlılık|Doğrulama|Test|Varmak|Kapsam|Kapsam Dışı|Mevcut Repo Kanıtı|Planlanan İş Kırılımı" Planner-docs --glob '!.git/**' --glob '!node_modules/**' --glob '!.venv/**' --glob '!dist/**' --glob '!build/**' --glob '!artifacts/**'
-- rg "TODO|FIXME|TBD|belirsiz|eksik|sonra|ileride|varsayım|assumption|blocked|blocker|risk|secret|token|credential|production|live|local|readiness" Planner-docs --glob '!.git/**' --glob '!node_modules/**' --glob '!.venv/**' --glob '!dist/**' --glob '!build/**' --glob '!artifacts/**'
+- rg "^#|^##|Faz|Phase|Stage|Maturity|Acceptance|Risk|Dependency|Validation|Test|Desired|Scope|Out of Scope|Current Repository Evidence|Planned Work Breakdown" Planner-docs --glob '!.git/**' --glob '!node_modules/**' --glob '!.venv/**' --glob '!dist/**' --glob '!build/**' --glob '!artifacts/**'
+- rg "TODO|FIXME|TBD|unclear|missing|later|future|assumption|blocked|blocker|risk|secret|token|credential|production|live|local|readiness" Planner-docs --glob '!.git/**' --glob '!node_modules/**' --glob '!dist/**' --glob '!build/**' --glob '!artifacts/**'
 - rg "docs/|Planner-docs/|Main-Planing|Sub-Planing|Faz-" Planner-docs --glob '!.git/**' --glob '!node_modules/**' --glob '!.venv/**' --glob '!dist/**' --glob '!build/**' --glob '!artifacts/**'
 
 Before writing the audit, run the bundled read-only validator if available:
@@ -145,7 +145,7 @@ Faz<phase-number>.<subphase-number>-<ascii-kebab-slug>.md
 Check:
 - ASCII-only filename slugs.
 - No spaces in filenames.
-- No Turkish characters in filenames.
+- No non-ASCII characters in filenames.
 - No duplicate filenames.
 - Folder number and file phase number match.
 - Slugs are meaningful, not generic.
@@ -167,19 +167,19 @@ Every sub-plan must contain exactly these required top-level sections, in this o
 
 # Faz X.Y — <Sub-Phase Title>
 
-## 1. Bağlam
-## 2. Hedef
-## 3. Açıklama
-## 4. Kapsam
-## 5. Kapsam Dışı
-## 6. Mevcut Repo Kanıtı
-## 7. Planlanan İş Kırılımı
-## 8. Kabul Kriterleri
-## 9. Doğrulama ve Test Yaklaşımı
-## 10. Bağımlılıklar ve Sıralama
-## 11. Riskler ve Önlemler
-## 12. Varmak İstenen Nokta
-## 13. Sonraki Alt Faza Geçiş Kriteri
+## 1. Context
+## 2. Goal
+## 3. Description
+## 4. Scope
+## 5. Out of Scope
+## 6. Current Repository Evidence
+## 7. Planned Work Breakdown
+## 8. Acceptance Criteria
+## 9. Validation and Test Approach
+## 10. Dependencies and Sequencing
+## 11. Risks and Mitigations
+## 12. Desired End State
+## 13. Next Sub-Phase Transition Criteria
 
 Detect:
 - missing sections;
@@ -266,7 +266,7 @@ Use exactly this top-level structure:
 
 # Sub-Planing Audit
 
-## 1. Denetim Özeti
+## 1. Audit Summary
 
 Include:
 - overall audit status: PASS, PASS_WITH_WARNINGS, or BLOCKED
@@ -280,7 +280,7 @@ Status definitions:
 - PASS_WITH_WARNINGS: Step 2 output is mostly usable, but some issues should be fixed before Step 4.
 - BLOCKED: Missing main plan, missing index, missing sub-plan files, severe coverage gaps, or severe structure problems prevent reliable Step 4 decomposition.
 
-## 2. İncelenen Kaynaklar
+## 2. Reviewed Sources
 
 List:
 - files inspected;
@@ -290,18 +290,18 @@ List:
 
 Do not include secrets.
 
-## 3. Ana Faz Kapsama Analizi
+## 3. Main Phase Coverage Analysis
 
 Create a table comparing Main-Planing.md phases to generated folders and sub-plans.
 
 Columns:
-- Ana faz no
-- Ana faz başlığı
-- Beklenen klasör
-- Klasör var mı?
-- Alt plan sayısı
-- Kapsama durumu
-- Notlar
+- Main phase no
+- Main phase heading
+- Expected folder
+- Folder exists?
+- Sub-plan count
+- Coverage status
+- Notes
 
 Mark status:
 - OK
@@ -310,7 +310,7 @@ Mark status:
 - EXTRA
 - BLOCKED
 
-## 4. Alt Plan Dosya Envanteri
+## 4. Sub-Plan File Inventory
 
 List all detected sub-plan files grouped by phase folder.
 
@@ -322,7 +322,7 @@ For each file include:
 - content quality status;
 - notes.
 
-## 5. Naming ve Sıralama Kontrolü
+## 5. Naming and Sequencing Check
 
 Report:
 - folder naming issues;
@@ -335,7 +335,7 @@ Report:
 
 If no issues, explicitly say no naming/order issues were found.
 
-## 6. Index Tutarlılık Kontrolü
+## 6. Index Consistency Check
 
 Compare Sub-Planing-Index.md to actual files.
 
@@ -347,7 +347,7 @@ Report:
 - inaccurate coverage claims;
 - questionable execution order.
 
-## 7. Zorunlu Bölüm Yapısı Kontrolü
+## 7. Required Section Structure Check
 
 For each sampled or all sub-plans, report required section compliance.
 
@@ -361,7 +361,7 @@ Include:
 - empty sections;
 - placeholder sections.
 
-## 8. İçerik Kalitesi ve Uygulanabilirlik Analizi
+## 8. Content Quality and Implementability Analysis
 
 Analyze:
 - whether sub-plans are specific;
@@ -374,7 +374,7 @@ Analyze:
 
 Be direct. If the docs are generic, say so.
 
-## 9. Scope Drift ve Mimari Tutarlılık Analizi
+## 9. Scope Drift and Architectural Consistency Analysis
 
 Report any drift from Main-Planing.md.
 
@@ -389,7 +389,7 @@ Include:
 
 Adapt this section to the project domain if it is not an agentic/software-factory project.
 
-## 10. Readiness Gerçekçiliği
+## 10. Readiness Realism
 
 Evaluate whether the planning language correctly distinguishes:
 - docs vs implementation;
@@ -401,7 +401,7 @@ Evaluate whether the planning language correctly distinguishes:
 
 Flag overclaims.
 
-## 11. Güvenlik ve Governance Bulguları
+## 11. Security and Governance Findings
 
 Report security/governance concerns in the generated plans.
 
@@ -417,15 +417,15 @@ Include:
 
 If the project domain differs, adapt but still check for security boundaries.
 
-## 12. Step 4 Hazırlık Değerlendirmesi
+## 12. Step 4 Readiness Assessment
 
 Create a table:
 
 Columns:
 - Faz / Alt Plan
-- Step 4’e hazır mı?
-- Neden
-- Step 4 başlamadan önce gereken düzeltme
+- Ready for Step 4?
+- Reason
+- Required fix before Step 4 starts
 
 Use statuses:
 - READY
@@ -433,7 +433,7 @@ Use statuses:
 - NEEDS_REPAIR
 - BLOCKED
 
-## 13. Öncelikli Düzeltme Listesi
+## 13. Priority Fix List
 
 List concrete fixes needed before Step 4.
 
@@ -453,20 +453,20 @@ Severity guide:
 
 Do not modify affected files. Only report fixes.
 
-## 14. Önerilen Sonraki Komut / Prompt
+## 14. Recommended Next Command / Prompt
 
 Provide a concise recommendation for the next Kimi Code prompt.
 
 If audit PASS:
-- Recommend the Step 4 implementation handoff prompt from references/Fourth-Planner.md.
+- Recommend the Step 4 implementation Goal handoff prompt from references/Fourth-Planner.md.
 - Name the first phase/sub-plan in the implementation queue.
-- Print the copy-ready Step 4 prompt for a new Kimi Code session.
+- Print the copy-ready Step 4 prompt for new Kimi Code session.
 - Remind the user that Step 4 should continue through the READY/READY_WITH_WARNINGS queue in small verified slices while avoiding loading all sub-plans at once.
 
 If PASS_WITH_WARNINGS:
 - If any P0/P1 finding or structural repair is present, recommend a Step 3.1 repair prompt targeting only the identified files.
 - Do not print the Step 4 prompt while P0/P1 findings exist.
-- If only P2/P3 findings remain, print the Step 4 prompt and state that those warnings must remain visible during implementation.
+- If only P2/P3 findings remain, print the Step 4 prompt and state that those warnings must remain visible during continuous implementation.
 
 If BLOCKED:
 - Recommend the minimal prompt needed to unblock Step 2/3.
@@ -474,7 +474,7 @@ If BLOCKED:
 
 Do not actually run the next prompt.
 
-## 15. Denetim Sonucu
+## 15. Audit Result
 
 End with:
 - final status;
@@ -548,7 +548,7 @@ If blocked:
 
 Final response requirements:
 
-After completion, provide a concise final summary in Turkish.
+After completion, provide a concise final summary using the same language contract: English by default unless the user explicitly requests another body language, with required artifact headings kept in English.
 
 Include:
 - audit status;
@@ -558,7 +558,7 @@ Include:
 - whether Step 4 can begin;
 - the most important fix, if any;
 - the recommended next Kimi Code prompt direction;
-- the Step 4 a new Kimi Code session prompt if and only if Step 4 is allowed by the audit and validator;
+- the Step 4 new Kimi Code session prompt if and only if Step 4 is allowed by the audit and validator;
 - a token-use and queue-continuation reminder when printing the Step 4 prompt;
 - confirmation that only Planner-docs/Sub-Planing-Audit.md was modified, or list unexpected modifications.
 

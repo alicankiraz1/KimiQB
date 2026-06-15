@@ -87,9 +87,9 @@ When comparing an untracked generated file to another file, use
 
 ## Required Step Handoffs
 
-- Step 1 must hand off Step 2 as text for a new Kimi Code session.
+- Step 1 must hand off Step 2 as text for new Kimi Code session.
 - Step 1.5 may create `Planner-docs/Autopsy.md` before Step 2 for existing projects.
-- Step 2 must finish by handing off Step 3 as text for a new Kimi Code session.
+- Step 2 must finish by handing off Step 3 as text for new Kimi Code session.
 - Step 3 must write only `Planner-docs/Sub-Planing-Audit.md`.
 - Step 3 may hand off Step 4 only after `--mode step4` validation passes.
 - Step 4 is implementation work in a new long-running Kimi Code session, not a planning-file generation step.

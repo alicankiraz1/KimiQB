@@ -17,79 +17,79 @@ from pathlib import Path
 
 STEP1_HEADINGS = [
     "# Main Planing",
-    "## 1. Yönetici Özeti",
-    "## 2. Proje Vizyonu",
-    "## 3. Mevcut Durum Analizi",
-    "## 4. Hedef Son Durum",
-    "## 5. Mimari Yön ve Ana Kararlar",
-    "## 6. Fazlara Bölünmüş Ana Yol Haritası",
-    "## 7. Kritik Riskler ve Açıklar",
-    "## 8. Önceliklendirilmiş Sonraki Adımlar",
-    "## 9. Step 2 İçin Hazırlık Notları",
-    "## 10. Repo İnceleme Notları",
+    "## 1. Executive Summary",
+    "## 2. Project Vision",
+    "## 3. Current State Analysis",
+    "## 4. Target End State",
+    "## 5. Architecture Direction and Key Decisions",
+    "## 6. Phase-Based Master Roadmap",
+    "## 7. Critical Risks and Gaps",
+    "## 8. Prioritized Next Steps",
+    "## 9. Step 2 Preparation Notes",
+    "## 10. Repository Review Notes",
 ]
 
 AUTOPSY_HEADINGS = [
     "# Project Autopsy",
-    "## 1. Yönetici Özeti",
-    "## 2. İncelenen Kaynaklar",
-    "## 3. Proje Bölümleri ve Sorumluluk Alanları",
-    "## 4. Feature Envanteri",
-    "## 5. Placeholder, Stub ve Skeleton Analizi",
-    "## 6. Teknik Borç ve Bakım Riskleri",
-    "## 7. Hatalı veya Eksik Entegrasyonlar",
-    "## 8. Test, CI ve Doğrulama Açıkları",
-    "## 9. Güvenlik, Secret ve Governance Bulguları",
-    "## 10. Operasyonel Readiness ve Gözlemlenebilirlik",
-    "## 11. Ana Planla Uyumluluk Analizi",
-    "## 12. Step 2 İçin Autopsy Feedbackleri",
-    "## 13. Öncelikli Düzeltme ve Planlama Sinyalleri",
+    "## 1. Executive Summary",
+    "## 2. Reviewed Sources",
+    "## 3. Project Areas and Ownership Boundaries",
+    "## 4. Feature Inventory",
+    "## 5. Placeholder, Stub, and Skeleton Analysis",
+    "## 6. Technical Debt and Maintenance Risks",
+    "## 7. Broken or Missing Integrations",
+    "## 8. Test, CI, and Validation Gaps",
+    "## 9. Security, Secret, and Governance Findings",
+    "## 10. Operational Readiness and Observability",
+    "## 11. Alignment Analysis with the Main Plan",
+    "## 12. Autopsy Feedback for Step 2",
+    "## 13. Priority Fix and Planning Signals",
 ]
 
 INDEX_HEADINGS = [
     "# Sub-Planing Index",
-    "## 1. Amaç",
-    "## 2. Kaynak Ana Plan",
-    "## 3. Faz ve Alt Plan Haritası",
-    "## 4. Öncelikli Detaylandırma Sırası",
-    "## 5. Kapsam Dışı Bırakılan veya Ertelenen Konular",
-    "## 6. Coverage Kontrolü",
-    "## 7. Repo İnceleme Notları",
+    "## 1. Purpose",
+    "## 2. Source Main Plan",
+    "## 3. Phase and Sub-Plan Map",
+    "## 4. Priority Detailing Order",
+    "## 5. Out-of-Scope or Deferred Topics",
+    "## 6. Coverage Check",
+    "## 7. Repository Review Notes",
 ]
 
 SUBPLAN_HEADINGS = [
-    "## 1. Bağlam",
-    "## 2. Hedef",
-    "## 3. Açıklama",
-    "## 4. Kapsam",
-    "## 5. Kapsam Dışı",
-    "## 6. Mevcut Repo Kanıtı",
-    "## 7. Planlanan İş Kırılımı",
-    "## 8. Kabul Kriterleri",
-    "## 9. Doğrulama ve Test Yaklaşımı",
-    "## 10. Bağımlılıklar ve Sıralama",
-    "## 11. Riskler ve Önlemler",
-    "## 12. Varmak İstenen Nokta",
-    "## 13. Sonraki Alt Faza Geçiş Kriteri",
+    "## 1. Context",
+    "## 2. Goal",
+    "## 3. Description",
+    "## 4. Scope",
+    "## 5. Out of Scope",
+    "## 6. Current Repository Evidence",
+    "## 7. Planned Work Breakdown",
+    "## 8. Acceptance Criteria",
+    "## 9. Validation and Test Approach",
+    "## 10. Dependencies and Sequencing",
+    "## 11. Risks and Mitigations",
+    "## 12. Desired End State",
+    "## 13. Next Sub-Phase Transition Criteria",
 ]
 
 AUDIT_HEADINGS = [
     "# Sub-Planing Audit",
-    "## 1. Denetim Özeti",
-    "## 2. İncelenen Kaynaklar",
-    "## 3. Ana Faz Kapsama Analizi",
-    "## 4. Alt Plan Dosya Envanteri",
-    "## 5. Naming ve Sıralama Kontrolü",
-    "## 6. Index Tutarlılık Kontrolü",
-    "## 7. Zorunlu Bölüm Yapısı Kontrolü",
-    "## 8. İçerik Kalitesi ve Uygulanabilirlik Analizi",
-    "## 9. Scope Drift ve Mimari Tutarlılık Analizi",
-    "## 10. Readiness Gerçekçiliği",
-    "## 11. Güvenlik ve Governance Bulguları",
-    "## 12. Step 4 Hazırlık Değerlendirmesi",
-    "## 13. Öncelikli Düzeltme Listesi",
-    "## 14. Önerilen Sonraki Komut / Prompt",
-    "## 15. Denetim Sonucu",
+    "## 1. Audit Summary",
+    "## 2. Reviewed Sources",
+    "## 3. Main Phase Coverage Analysis",
+    "## 4. Sub-Plan File Inventory",
+    "## 5. Naming and Sequencing Check",
+    "## 6. Index Consistency Check",
+    "## 7. Required Section Structure Check",
+    "## 8. Content Quality and Implementability Analysis",
+    "## 9. Scope Drift and Architectural Consistency Analysis",
+    "## 10. Readiness Realism",
+    "## 11. Security and Governance Findings",
+    "## 12. Step 4 Readiness Assessment",
+    "## 13. Priority Fix List",
+    "## 14. Recommended Next Command / Prompt",
+    "## 15. Audit Result",
 ]
 
 FOLDER_RE = re.compile(r"^Faz-(\d+)-Plans$")
@@ -97,10 +97,10 @@ SUBPLAN_RE = re.compile(r"^Faz(\d+)\.(\d+)-[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 INDEX_REF_RE = re.compile(
     r"(?:\./)?(?:Planner-docs/)?Faz-\d+-Plans/Faz\d+\.\d+-[a-z0-9]+(?:-[a-z0-9]+)*\.md"
 )
-MAIN_PHASE_RE = re.compile(r"\b(?:Faz|Phase|Aşama)\s*-?\s*(\d+)\b", re.IGNORECASE)
-ROADMAP_HEADING = "## 6. Fazlara Bölünmüş Ana Yol Haritası"
+MAIN_PHASE_RE = re.compile(r"\b(?:Faz|Phase|Stage)\s*-?\s*(\d+)\b", re.IGNORECASE)
+ROADMAP_HEADING = "## 6. Phase-Based Master Roadmap"
 ROADMAP_TABLE_ROW_RE = re.compile(r"^\|\s*(\d+)\s*\|", re.MULTILINE)
-ROADMAP_HEADING_PHASE_RE = re.compile(r"^#{3,6}\s*(?:Faz|Phase|Aşama)\s*-?\s*(\d+)\b", re.MULTILINE | re.IGNORECASE)
+ROADMAP_HEADING_PHASE_RE = re.compile(r"^#{3,6}\s*(?:Faz|Phase|Stage)\s*-?\s*(\d+)\b", re.MULTILINE | re.IGNORECASE)
 H1_SUBPLAN_RE = re.compile(r"^# Faz\s+(\d+)\.(\d+)\s+[—-]\s+.+$", re.MULTILINE)
 SECTION_RE = re.compile(r"^(##\s+\d+\.\s+.+)$", re.MULTILINE)
 AUDIT_FIX_RE = re.compile(
@@ -109,7 +109,17 @@ AUDIT_FIX_RE = re.compile(
 )
 
 SECRET_PATTERNS = [
-    ("openai_api_key", re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")),
+    (
+        "openrouter_api_key",
+        re.compile(
+            r"\bsk-or-v1-[A-Za-z0-9_-]{20,}\b"
+            r"|OPENROUTER_API_KEY\s*=\s*"
+            r"(?!(?:['\"]?(?:\$OPENROUTER_API_KEY|<redacted>|your_openrouter_api_key)['\"]?)(?:\s|$))"
+            r"[^\s#]+",
+            re.IGNORECASE,
+        ),
+    ),
+    ("openai_api_key", re.compile(r"\bsk-(?!or-v1-)[A-Za-z0-9_-]{20,}\b")),
     ("github_pat", re.compile(r"\bgithub_pat_[A-Za-z0-9_]{20,}\b")),
     ("github_legacy_pat", re.compile(r"\bghp_[A-Za-z0-9]{20,}\b")),
     ("aws_access_key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
@@ -122,9 +132,9 @@ PLACEHOLDER_PATTERNS = [
     ("tbd", re.compile(r"\bTBD\b", re.IGNORECASE)),
     ("fixme", re.compile(r"\bFIXME\b", re.IGNORECASE)),
     ("lorem_ipsum", re.compile(r"\blorem ipsum\b", re.IGNORECASE)),
-    ("doldurulacak", re.compile(r"\bdoldurulacak\b", re.IGNORECASE)),
-    ("angle_placeholder", re.compile(r"<(?:TODO|TBD|PLACEHOLDER|DOLDURULACAK)[^>]*>", re.IGNORECASE)),
-    ("brace_placeholder", re.compile(r"\{\{[^{}]*(?:TODO|TBD|PLACEHOLDER|DOLDURULACAK)[^{}]*\}\}", re.IGNORECASE)),
+    ("to_be_filled", re.compile(r"\bto be filled\b|\bto_be_filled\b", re.IGNORECASE)),
+    ("angle_placeholder", re.compile(r"<(?:TODO|TBD|PLACEHOLDER|TO_BE_FILLED)[^>]*>", re.IGNORECASE)),
+    ("brace_placeholder", re.compile(r"\{\{[^{}]*(?:TODO|TBD|PLACEHOLDER|TO_BE_FILLED)[^{}]*\}\}", re.IGNORECASE)),
 ]
 
 REPEATED_SENTENCE_MIN_COUNT = 5
@@ -137,9 +147,9 @@ ALLOWED_REPEATED_SENTENCE_FRAGMENTS = (
     "local env",
     "source code",
     "config, test",
-    "plan dosyasında",
-    "plan dosyalarına",
-    "gerçek secret",
+    "planning file",
+    "planning files",
+    "real secret",
 )
 
 
@@ -380,12 +390,17 @@ def validate_subplan_structure(
             if pattern.search(body):
                 state.warning(f"placeholder_text={state.rel(path)}::{required}::pattern={pattern_name}")
 
-    for heading in ("## 3. Açıklama", "## 7. Planlanan İş Kırılımı"):
+    for heading in ("## 3. Description", "## 7. Planned Work Breakdown"):
         body = normalized_body(section_body(text, heading))
         if len(body) >= 160:
             repeated_bodies[f"{heading}:{body}"].append(state.rel(path))
 
-    for heading in ("## 3. Açıklama", "## 6. Mevcut Repo Kanıtı", "## 8. Kabul Kriterleri", "## 11. Riskler ve Önlemler"):
+    for heading in (
+        "## 3. Description",
+        "## 6. Current Repository Evidence",
+        "## 8. Acceptance Criteria",
+        "## 11. Risks and Mitigations",
+    ):
         add_repeated_sentence_candidates(state, path, section_body(text, heading), repeated_sentences)
 
 
@@ -480,7 +495,7 @@ def extract_audit_status(text: str) -> str | None:
 
 
 def count_audit_severities(text: str) -> dict[str, int]:
-    fix_section = markdown_section(text, "## 13. Öncelikli Düzeltme Listesi")
+    fix_section = markdown_section(text, "## 13. Priority Fix List")
     counts = {severity: 0 for severity in ("P0", "P1", "P2", "P3")}
     for _, severity in AUDIT_FIX_RE.findall(fix_section):
         counts[severity] += 1
@@ -567,23 +582,27 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def main(argv: list[str]) -> int:
-    args = parse_args(argv)
-    state = ValidationState(root=Path(args.root).resolve(), mode=args.mode, strict=args.strict)
+def run_validation(root: Path, mode: str, strict: bool = False) -> int:
+    state = ValidationState(root=root.resolve(), mode=mode, strict=strict)
 
-    if state.mode == "step1":
+    if mode == "step1":
         validate_step1(state)
-    elif state.mode == "step2":
+    elif mode == "step2":
         validate_step2(state)
-    elif state.mode in {"step3", "all"}:
+    elif mode in {"step3", "all"}:
         validate_step3_preflight(state)
-    elif state.mode == "step4":
+    elif mode == "step4":
         validate_step4_readiness(state)
     else:
-        state.error(f"unknown_mode={state.mode}")
+        state.error(f"unknown_mode={mode}")
 
     scan_secrets(state)
     return finalize(state)
+
+
+def main(argv: list[str]) -> int:
+    args = parse_args(argv)
+    return run_validation(Path(args.root), args.mode, args.strict)
 
 
 if __name__ == "__main__":

@@ -47,6 +47,8 @@ Before asking `PROJECT_NAME`, do a bounded, read-only repository scan so the int
 3. `TARGET_END_STATE`: what done looks like from product, engineering, operations, security, and user-value perspectives, with a five-part draft when possible.
 4. `KNOWN_CONSTRAINTS`: team size, infrastructure, budget, timeline, preferred stack, compliance boundaries, must-use tools, and must-not-use tools, with detected constraints and unknowns when possible.
 
+KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another body language. Required document headings remain English for validator stability.
+
 After all four values are available:
 
 1. Read `${KIMI_SKILL_DIR}/references/First-Planner.md`.
@@ -77,9 +79,9 @@ When Step 1.5 applies:
 After Step 1 feedback is handled, ask whether the user wants to continue to Step 2. If yes, tell the user to copy this text into a new Kimi Code session:
 
 ```text
-/skill:kimiqb Step 2'yi references/Second-Planner.md talimatlarına göre yürüt.
+/skill:kimiqb Run Step 2 according to references/Second-Planner.md.
 
-Planner-docs/Main-Planing.md dosyasındaki tüm ana fazları oku. Planner-docs/Autopsy.md varsa onu da destekleyici feedback kaynağı olarak tamamen oku ve alt faz planlarında dikkate al. Her faz için Planner-docs altında Faz-<n>-Plans klasörleri ve Faz<n>.<m>-*.md detaylı alt plan dosyaları oluştur. Tüm fazlar kapsanmadan durma. Sadece Planner-docs altında değişiklik yap.
+Read all main phases in Planner-docs/Main-Planing.md. If Planner-docs/Autopsy.md exists, read it fully as a supporting feedback source and account for it in the sub-phase plans. For each phase, create Faz-<n>-Plans folders and detailed Faz<n>.<m>-*.md sub-plan files under Planner-docs. Do not stop until all phases are covered. Modify only Planner-docs.
 ```
 
 When executing Step 2 directly:
@@ -88,7 +90,7 @@ When executing Step 2 directly:
 2. Read `${KIMI_SKILL_DIR}/references/workflow-quality.md`.
 3. Read `Planner-docs/Autopsy.md` when it exists; do not block Step 2 when it is absent.
 4. Follow repository inspection, file-boundary, naming, all-file validation, and stopping rules exactly.
-5. Run `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py --root . --mode step2 --strict` after generation when available. If no script path is accessible, perform equivalent all-file validation and report that fallback clearly.
+5. Run the bundled validator `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py --root . --mode step2 --strict` after generation when available. If no script path is accessible, perform equivalent all-file validation and report that fallback clearly.
 6. Do not modify files outside `Planner-docs/`.
 7. After the Step 2 summary, print the Step 3 handoff block from this skill.
 
@@ -97,16 +99,16 @@ When executing Step 2 directly:
 After Step 2 is complete, ask whether the user wants to continue to Step 3. If yes, tell the user to copy this text into a new Kimi Code session:
 
 ```text
-/skill:kimiqb Step 3'ü references/Third-Planner.md talimatlarına göre yürüt.
+/skill:kimiqb Run Step 3 according to references/Third-Planner.md.
 
-Planner-docs/Main-Planing.md, Planner-docs/Sub-Planing-Index.md ve Planner-docs/Faz-*-Plans/*.md dosyalarını denetle. Ana faz coverage, dosya isimlendirme, sıralama, zorunlu bölüm yapısı, index tutarlılığı, içerik kalitesi, scope drift, readiness gerçekçiliği, güvenlik/governance ve Step 4 hazırlığını analiz et. Hiçbir plan dosyasını düzeltme; yalnızca Planner-docs/Sub-Planing-Audit.md raporunu üret. Tüm fazlar ve alt planlar incelenmeden durma.
+Audit Planner-docs/Main-Planing.md, Planner-docs/Sub-Planing-Index.md, and Planner-docs/Faz-*-Plans/*.md. Analyze main-phase coverage, file naming, sequencing, required section structure, index consistency, content quality, scope drift, readiness realism, security/governance, and Step 4 readiness. Do not fix any plan files; produce only Planner-docs/Sub-Planing-Audit.md. Do not stop until all phases and sub-plans have been reviewed.
 ```
 
 When executing Step 3 directly:
 
 1. Read `${KIMI_SKILL_DIR}/references/Third-Planner.md`.
 2. Read `${KIMI_SKILL_DIR}/references/workflow-quality.md`.
-3. Run `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py --root . --mode step3 --strict` first when available and incorporate its findings into the audit. If no script path is accessible, perform equivalent all-file validation and report that fallback clearly.
+3. Run the bundled validator `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py --root . --mode step3 --strict` first when available and incorporate its findings into the audit. If no script path is accessible, perform equivalent all-file validation and report that fallback clearly.
 4. Follow audit, file-boundary, validation, and stopping rules exactly.
 5. Modify only `Planner-docs/Sub-Planing-Audit.md`.
 6. After the Step 3 summary, print the Step 4 handoff prompt from `${KIMI_SKILL_DIR}/references/Fourth-Planner.md` only if the audit permits implementation.
