@@ -7,6 +7,7 @@ Current package contract:
 - `version: 0.2.1`
 - `artifact_schema_version: 2`
 - `handoff_contract_version: 1`
+- Repository: `https://github.com/alicankiraz1/KimiQB`
 
 KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another content language. Required document headings remain English for validator stability.
 
@@ -33,6 +34,14 @@ KimiQB asks intake questions in the user's language when practical. Generated Pl
 Steps 2, 3, and 4 are intentionally handed off as text prompts for new Kimi Code sessions unless the user explicitly asks for a direct run.
 
 ## Quick Start
+
+Install from GitHub inside Kimi Code:
+
+```text
+/plugins install https://github.com/alicankiraz1/KimiQB
+/plugins reload
+/new
+```
 
 Install from a local checkout inside Kimi Code:
 
