@@ -17,6 +17,7 @@ class KimiManifestTests(unittest.TestCase):
         self.assertEqual(manifest["name"], "kimiqb")
         self.assertRegex(manifest["name"], r"^[a-z0-9][a-z0-9_-]{0,63}$")
         self.assertRegex(manifest["version"], r"^\d+\.\d+\.\d+$")
+        self.assertEqual(manifest["version"], "0.2.1")
         self.assertEqual(manifest["skills"], "./skills/")
         self.assertEqual(manifest["license"], "MIT")
 
@@ -25,6 +26,8 @@ class KimiManifestTests(unittest.TestCase):
         self.assertIn("planning", interface["shortDescription"].lower())
         self.assertEqual(interface["developerName"], "Alican Kiraz")
         self.assertTrue(interface["websiteURL"].startswith("https://github.com/"))
+        for phrase in ["comprehension", "traceability", "ledger", "gated"]:
+            self.assertIn(phrase, json.dumps(manifest).lower())
 
     def test_manifest_avoids_codex_only_or_unsupported_runtime_fields(self) -> None:
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))

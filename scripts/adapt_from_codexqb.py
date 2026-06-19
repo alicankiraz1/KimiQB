@@ -8,6 +8,7 @@ checkout. It intentionally does not modify the CodexQB source repository.
 from __future__ import annotations
 
 import os
+import re
 import shutil
 from pathlib import Path
 
@@ -34,23 +35,51 @@ REFERENCE_FILES = [
     "subagent-playbook.md",
     "planning-ledger.md",
     "project-ontology.md",
+    "project-comprehension-methods.md",
+    "probe-policy.md",
     "assessment-and-budget.md",
     "engineering-principles.md",
 ]
 
+HANDOFF_FILES = [
+    "run-step2.md",
+    "run-step3.md",
+    "run-step4.md",
+]
+
 TEXT_REPLACEMENTS = [
+    ("codexqb_schema_version", "kimiqb_schema_version"),
+    ("Use $codexqb. Run Step", "/skill:kimiqb Run Step"),
+    ("Use $codexqb. Read and return", "/skill:kimiqb Read and return"),
     ("Use $codexqb.", "/skill:kimiqb"),
     ("Use $codexqb", "/skill:kimiqb"),
     ("$codexqb", "/skill:kimiqb"),
     ("If installed/available", "if installed/available"),
+    ("CodexQB Probe Policy", "KimiQB Probe Policy"),
+    ("CodexQB Project Comprehension Methods", "KimiQB Project Comprehension Methods"),
+    ("CodexQB Planning Ledger", "KimiQB Planning Ledger"),
+    ("CodexQB uses", "KimiQB uses"),
+    ("CodexQB believes", "KimiQB believes"),
+    ("CodexQB generates", "KimiQB generates"),
+    ("CodexQB planning-ledger guidance", "KimiQB planning-ledger guidance"),
+    ("Long CodexQB runs", "Long KimiQB runs"),
+    ("Parent CodexQB", "Parent KimiQB"),
     ("CodexQB", "KimiQB"),
     ("codexqb", "kimiqb"),
-    ("plugins/kimiqb/skills/kimiqb/scripts/validate_planner_docs.py", "skills/kimiqb/scripts/validate_planner_docs.py"),
+    (
+        "plugins/kimiqb/skills/kimiqb/scripts/validate_planner_docs.py",
+        "skills/kimiqb/scripts/validate_planner_docs.py",
+    ),
     ("plugins/kimiqb/skills/kimiqb", "skills/kimiqb"),
-    ("plugins/codexqb/skills/codexqb/scripts/validate_planner_docs.py", "skills/kimiqb/scripts/validate_planner_docs.py"),
+    (
+        "plugins/codexqb/skills/codexqb/scripts/validate_planner_docs.py",
+        "skills/kimiqb/scripts/validate_planner_docs.py",
+    ),
     ("plugins/codexqb/skills/codexqb", "skills/kimiqb"),
     ("Codex/GitHub", "Kimi Code/GitHub"),
+    ("Codex skills/plugins by scope", "Kimi-compatible skills/plugins by scope"),
     ("Codex skills/plugins", "Kimi Code skills/plugins"),
+    ("Codex skills", "Kimi Code skills"),
     ("Codex skill", "Kimi Code skill"),
     ("Codex plugin", "Kimi Code plugin"),
     ("Codex thread", "Kimi Code session"),
@@ -59,10 +88,16 @@ TEXT_REPLACEMENTS = [
     ("Codex to", "Kimi Code to"),
     ("Codex should", "Kimi Code should"),
     ("Codex ", "Kimi Code "),
-    ("You are Kimi Code, running", "You are Kimi Code, running"),
+    ("Goal Run Contract", "Kimi Code Session Contract"),
+    ("canonical Goal Run Contract", "canonical Kimi Code Session Contract"),
+    ("Step 2 Goal Handoff", "Step 2 Kimi Code Session Handoff"),
+    ("Step 3 Goal Handoff", "Step 3 Kimi Code Session Handoff"),
+    ("Step 4 Goal Handoff", "Step 4 Kimi Code Session Handoff"),
     ("Goal-following behavior", "Long-session behavior"),
     ("Goal mode prompts", "new Kimi Code session prompts"),
     ("Goal mode prompt", "new Kimi Code session prompt"),
+    ("Goal mode text", "Kimi Code session text"),
+    ("Goal mode work", "Kimi Code long-session work"),
     ("Goal mode", "new Kimi Code session"),
     ("Goal Mode", "Long-Running Kimi Code Session"),
     ("Goal handoff", "Kimi Code session handoff"),
@@ -70,6 +105,11 @@ TEXT_REPLACEMENTS = [
     ("Goal runs", "long-running Kimi Code sessions"),
     ("Goal run", "long-running Kimi Code session"),
     ("Goal following", "long-session following"),
+    ("Goal batch", "Kimi Code session batch"),
+    ("Goal-mode readiness", "Kimi Code session readiness"),
+    ("open Goal mode", "start a new Kimi Code session"),
+    ("copy it into Goal mode", "copy it into a new Kimi Code session"),
+    ("paste into Goal mode", "paste into a new Kimi Code session"),
     ("Hedefi Takip Et", "a new Kimi Code session"),
     ("click `a new Kimi Code session`", "start a new Kimi Code session"),
     ("paste into `a new Kimi Code session`", "paste into a new Kimi Code session"),
@@ -87,6 +127,28 @@ def read_source(relative: str) -> str:
 def adapt_text(text: str) -> str:
     for old, new in TEXT_REPLACEMENTS:
         text = text.replace(old, new)
+    text = re.sub(r"`references/([^`]+)`", r"`${KIMI_SKILL_DIR}/references/\1`", text)
+    text = re.sub(
+        r"`scripts/validate_planner_docs.py`",
+        r"`${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py`",
+        text,
+    )
+    text = text.replace(
+        "native Kimi Code skill workflow, not a Claude migration",
+        "native Kimi Code skill workflow",
+    )
+    text = text.replace(
+        "Do not run `migrate-to-codex` for this workflow. This is a native Kimi Code skill workflow.",
+        "Do not run migration workflows for this package. This is a native Kimi Code skill workflow.",
+    )
+    text = text.replace(
+        "new Kimi Code session handoffs must",
+        "Kimi Code session handoffs must",
+    )
+    text = text.replace(
+        "open new Kimi Code session",
+        "start a new Kimi Code session",
+    )
     return text
 
 
@@ -97,191 +159,41 @@ def write_text(relative: str, text: str) -> None:
 
 
 def build_skill() -> str:
+    source = read_source("SKILL.md")
+    body = source.split("---", 2)[2].lstrip()
+    body = adapt_text(body)
+    body = body.replace(
+        "text-only new Kimi Code session prompts",
+        "copy-ready prompts for a new Kimi Code session",
+    )
+    body = body.replace(
+        "unless the user explicitly asks for a different flow",
+        "unless the user explicitly asks for a direct run",
+    )
+    body = body.replace(
+        "KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another content language.",
+        "KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another content language.",
+    )
+    body = body.replace(
+        "Use subagents only when they reduce context pollution or improve evidence quality",
+        "Use Kimi Code subagents only when they reduce context pollution or improve evidence quality",
+    )
     return """---
 name: kimiqb
-description: Vibecoding-first project planning workflow for Kimi Code. Use to create Planner-docs/Main-Planing.md, run an existing-project autopsy, maintain ontology and ledger context, decompose phases into sub-plans, audit readiness, and print a gated implementation handoff.
+description: Vibecoding-first project planning workflow for Kimi Code. Use to create Planner-docs/Main-Planing.md, run an existing-project autopsy, maintain comprehension, ontology, and ledger context, decompose phases into sub-plans, audit readiness, and print a gated implementation handoff.
 type: prompt
 whenToUse: When the user asks Kimi Code to plan a software, AI, infrastructure, security, automation, or product repository before implementation.
 disableModelInvocation: false
 ---
 
-# KimiQB
-
-## Overview
-
-Run the bundled planning workflow for a project repository. Keep Step 1 conversational and repo-aware, run Step 1.5 Autopsy for existing projects, and hand off Step 2 and Step 3 as copy-ready prompts for a new Kimi Code session unless the user explicitly asks for a direct run. After Step 3, provide a gated Step 4 implementation handoff prompt only when the audit says implementation can begin.
-
-The bundled prompts are:
-
-- `${KIMI_SKILL_DIR}/references/First-Planner.md` for Step 1 main planning.
-- `${KIMI_SKILL_DIR}/references/Autopsy-Planner.md` for Step 1.5 existing-project autopsy.
-- `${KIMI_SKILL_DIR}/references/Second-Planner.md` for Step 2 phase sub-planning.
-- `${KIMI_SKILL_DIR}/references/Third-Planner.md` for Step 3 sub-plan QA and coverage audit.
-- `${KIMI_SKILL_DIR}/references/Fourth-Planner.md` for the Step 4 implementation handoff prompt template.
-
-Planning behavior references:
-
-- `${KIMI_SKILL_DIR}/references/vibecoding-principles.md` for adaptive, small-slice, validation-first planning.
-- `${KIMI_SKILL_DIR}/references/subagent-playbook.md` for safe subagent usage and role boundaries.
-- `${KIMI_SKILL_DIR}/references/planning-ledger.md` for durable plan/implementation history via `Planner-docs/Planing-Ledger.md`.
-- `${KIMI_SKILL_DIR}/references/project-ontology.md` for durable project vocabulary, entities, workflows, boundaries, and invariants.
-- `${KIMI_SKILL_DIR}/references/assessment-and-budget.md` for autonomy, long-running Kimi Code sessions, token/context, and budget assessment.
-- `${KIMI_SKILL_DIR}/references/engineering-principles.md` for domain-appropriate CS, architecture, validation, and secure engineering methods.
-
-Bundled support files:
-
-- `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py` for read-only structural validation of `Planner-docs/`.
-- `${KIMI_SKILL_DIR}/references/repo-aware-intake.md` for evidence-backed Step 1 intake questions.
-- `${KIMI_SKILL_DIR}/references/workflow-quality.md` for reliability, validation, token discipline, and handoff practices.
-
-## Workflow Selection
-
-1. If the user asks for normal planner startup, run Step 1.
-2. If the user directly asks for Step 1.5 or Autopsy, read `${KIMI_SKILL_DIR}/references/Autopsy-Planner.md` and execute it.
-3. If the user directly asks for Step 2, read `${KIMI_SKILL_DIR}/references/Second-Planner.md` and execute it.
-4. If the user directly asks for Step 3, read `${KIMI_SKILL_DIR}/references/Third-Planner.md` and execute it.
-5. If the user asks only for prompt text, print the matching Step 2, Step 3, or gated Step 4 copy block without modifying files.
-
-Do not run migration workflows for this package. This is a native Kimi Code skill workflow.
-
-## Step 1 Intake
-
-Read `${KIMI_SKILL_DIR}/references/repo-aware-intake.md` before asking questions.
-
-Before asking `PROJECT_NAME`, do a bounded, read-only repository scan so the intake can suggest evidence-backed defaults. If `Planner-docs/Planing-Ledger.md` or `Planner-docs/Project-Ontology.md` exists, read it before asking intake questions and use it as supporting history, not as unquestioned truth. Then ask these four fields one at a time in the user's language, using plain text questions only:
-
-1. `PROJECT_NAME`: project name, with an inferred default when possible.
-2. `PROJECT_INTENT`: what the project is for and what it should become, with a repo-derived draft when possible.
-3. `TARGET_END_STATE`: what done looks like from product, engineering, operations, security, and user-value perspectives, with a five-part draft when possible.
-4. `KNOWN_CONSTRAINTS`: team size, infrastructure, budget, timeline, preferred stack, compliance boundaries, must-use tools, must-not-use tools, desired autonomy level, human review cadence, and any token/usage budget with detected constraints and unknowns when possible.
-
-KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another body language. Required document headings remain English for validator stability.
-
-## Vibecoding, Memory, Ontology, and Subagent Behavior
-
-KimiQB uses a vibecoding-first planning style: understand the repo, preserve a clear target, plan the next useful verified moves, and keep implementation slices small, reversible, and evidence-backed. Vibecoding does not relax safety, validation, secret, approval, or file-boundary rules.
-
-Before long planning runs, read `${KIMI_SKILL_DIR}/references/vibecoding-principles.md`, `${KIMI_SKILL_DIR}/references/assessment-and-budget.md`, and `${KIMI_SKILL_DIR}/references/engineering-principles.md`. For existing projects, also read `${KIMI_SKILL_DIR}/references/planning-ledger.md` and `${KIMI_SKILL_DIR}/references/project-ontology.md`; if `Planner-docs/Planing-Ledger.md` or `Planner-docs/Project-Ontology.md` exists in the target repo, read them as evidence before replanning.
-
-Use subagents only when they reduce context pollution or improve evidence quality: large repo exploration, Step 1.5 Autopsy, ontology mapping, multi-phase Step 2 drafting, Step 3 readiness/security audit, or Step 4 implementation/review separation. Read `${KIMI_SKILL_DIR}/references/subagent-playbook.md` before requesting subagents. Parent KimiQB owns final artifact writes; subagents should gather evidence, draft options, or review unless the user explicitly asks otherwise.
-
-Kimi Code session handoffs must include the outcome, unchanged boundaries, validation checkpoints, stop gates, token/context risk, and whether subagents are recommended.
-
-After all four values are available:
-
-1. Read `${KIMI_SKILL_DIR}/references/First-Planner.md`.
-2. Substitute the four collected values into the matching placeholders.
-3. Follow the substituted Step 1 prompt exactly.
-4. Create or update only `Planner-docs/Main-Planing.md`, as required by the Step 1 prompt.
-5. After completing Step 1, decide whether Step 1.5 Autopsy applies.
-6. Run Step 1.5 automatically only when the repository is an existing or partially built project with meaningful evidence such as README, manifests, source/service/package directories, tests, docs, configs, or CI.
-7. Skip Step 1.5 for new or nearly empty projects; do not create `Planner-docs/Autopsy.md` in that case.
-8. After Step 1 and any Step 1.5 Autopsy work, ask the user in plain text whether they have feedback for the main plan and autopsy.
-9. If feedback is provided, apply it under the same file boundary: update only `Planner-docs/Main-Planing.md` for main plan feedback and only `Planner-docs/Autopsy.md` for autopsy feedback.
-
-## Step 1.5 Autopsy
-
-Step 1.5 is for existing or partially built projects. It should not run for genuinely new or nearly empty repositories.
-
-When Step 1.5 applies:
-
-1. Read `${KIMI_SKILL_DIR}/references/Autopsy-Planner.md`.
-2. Read `Planner-docs/Main-Planing.md`.
-3. Inspect the repository with read-only commands.
-4. Create or update `Planner-docs/Autopsy.md`; when enough evidence exists, also create or update `Planner-docs/Project-Ontology.md`.
-5. Do not modify source files, `Planner-docs/Main-Planing.md`, or any Step 2/3 files.
-6. Treat `Autopsy.md`, `Project-Ontology.md`, and any existing `Planing-Ledger.md` as Step 2 feedback, not as replacements for the main plan.
-
-## Step 2 Handoff
-
-After Step 1 feedback is handled, ask whether the user wants to continue to Step 2. If yes, tell the user to copy this text into a new Kimi Code session:
-
-```text
-/skill:kimiqb Run Step 2 according to references/Second-Planner.md.
-
-Read all main phases in Planner-docs/Main-Planing.md. If Planner-docs/Autopsy.md, Planner-docs/Project-Ontology.md, or Planner-docs/Planing-Ledger.md exists, read it fully as supporting evidence and account for it in the sub-phase plans. Plan in a vibecoding-first style: small reversible slices, fast validation signals, explicit deferrals, security boundaries, and long-running Kimi Code session readiness. For each phase, create Faz-<n>-Plans folders and detailed Faz<n>.<m>-*.md sub-plan files under Planner-docs. Do not stop until all phases are covered. Modify only Planner-docs.
-```
-
-When executing Step 2 directly:
-
-1. Read `${KIMI_SKILL_DIR}/references/Second-Planner.md`.
-2. Read `${KIMI_SKILL_DIR}/references/workflow-quality.md`.
-3. Read `Planner-docs/Autopsy.md`, `Planner-docs/Project-Ontology.md`, and `Planner-docs/Planing-Ledger.md` when they exist; do not block Step 2 when they are absent.
-4. Follow repository inspection, file-boundary, naming, all-file validation, and stopping rules exactly.
-5. Run the bundled validator `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py --root . --mode step2 --strict` after generation when available. If no script path is accessible, perform equivalent all-file validation and report that fallback clearly.
-6. Do not modify files outside `Planner-docs/`.
-7. After the Step 2 summary, print the Step 3 handoff block from this skill.
-
-## Step 3 Handoff
-
-After Step 2 is complete, ask whether the user wants to continue to Step 3. If yes, tell the user to copy this text into a new Kimi Code session:
-
-```text
-/skill:kimiqb Run Step 3 according to references/Third-Planner.md.
-
-Audit Planner-docs/Main-Planing.md, Planner-docs/Sub-Planing-Index.md, Planner-docs/Faz-*-Plans/*.md, and any supporting Planner-docs/Autopsy.md, Planner-docs/Project-Ontology.md, or Planner-docs/Planing-Ledger.md. Analyze main-phase coverage, file naming, sequencing, required section structure, index consistency, content quality, scope drift, readiness realism, ontology consistency, planning-history continuity, security/governance, vibecoding slice quality, and Step 4 readiness. Do not fix any plan files; produce only Planner-docs/Sub-Planing-Audit.md. Do not stop until all phases and sub-plans have been reviewed.
-```
-
-When executing Step 3 directly:
-
-1. Read `${KIMI_SKILL_DIR}/references/Third-Planner.md`.
-2. Read `${KIMI_SKILL_DIR}/references/workflow-quality.md`.
-3. Run the bundled validator `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py --root . --mode step3 --strict` first when available and incorporate its findings into the audit. If no script path is accessible, perform equivalent all-file validation and report that fallback clearly.
-4. Follow audit, file-boundary, validation, and stopping rules exactly.
-5. Modify only `Planner-docs/Sub-Planing-Audit.md`.
-6. After the Step 3 summary, print the Step 4 handoff prompt from `${KIMI_SKILL_DIR}/references/Fourth-Planner.md` only if the audit permits implementation.
-
-## Step 4 Handoff
-
-Step 4 is not a KimiQB planning step and must not be executed automatically by this skill.
-
-When Step 3 completes:
-
-1. Read `${KIMI_SKILL_DIR}/references/Fourth-Planner.md`.
-2. Run `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py --root . --mode step4` when available. If no script path is accessible, perform equivalent all-file validation and report that fallback clearly.
-3. If validation passes, print the Step 4 copy block and remind the user to watch token use.
-4. If validation fails because the audit is `BLOCKED` or contains P0/P1 findings, do not print the Step 4 prompt; print the minimal repair or unblock prompt instead.
-5. If validation passes with non-blocking warnings, print the Step 4 prompt and state that the implementation run must keep P2/P3 warnings visible.
-6. The Step 4 prompt should execute the READY/READY_WITH_WARNINGS queue continuously in small verified slices. It should not stop after the first successful slice unless a stop gate is hit.
-
-## Quality and Validation
-
-- Prefer `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py` over ad hoc validation scripts.
-- Use `--mode step1`, `--mode autopsy`, `--mode step2`, `--mode step3`, or `--mode step4` for the active workflow step.
-- Use `--strict` in long-running Kimi Code sessions so generic or repeated section warnings become failures.
-- Do not report section counts from memory; report counts only after reading the active prompt or running validation.
-- For untracked `Planner-docs/`, use `find Planner-docs -maxdepth 4 -type f | sort`, `git status --short -- Planner-docs`, and `git diff -- Planner-docs` together.
-- Keep long stdout concise. Put detailed evidence in the generated Markdown artifacts.
-- Track planning and implementation continuity through `Planner-docs/Planing-Ledger.md` when available; Step 4 should append concise implementation summaries there.
-
-## Safety Rules
-
-- Treat the current working directory as the project being planned.
-- Inspect the repository before writing any planning file, using the safe read-only commands required by the active planner prompt.
-- Do not implement product features, refactor source code, install dependencies, commit, push, deploy, or open pull requests during Steps 1-3.
-- Do not write secrets, tokens, credentials, private keys, or local sensitive environment values into planning files.
-- Preserve the required misspelled filenames exactly: `Main-Planing.md`, `Sub-Planing-Index.md`, and `Sub-Planing-Audit.md`.
-- Preserve `Planner-docs/Autopsy.md` as the Step 1.5 autopsy filename.
-- If a required source file is missing, follow the blocker behavior in the active planner prompt instead of inventing speculative output.
-
-## Completion Reporting
-
-For each executed step, report concisely:
-
-- which planner step ran;
-- which files were created or updated;
-- whether the step succeeded or was blocked;
-- the highest-priority next action;
-- any uncertainty or blocker discovered.
-"""
-
+""" + body
 
 
 def main() -> None:
     if not SOURCE_SKILL_ROOT.is_dir():
         raise SystemExit(f"missing CodexQB source skill root: {SOURCE_SKILL_ROOT}")
 
-    (DEST_SKILL_ROOT / "references").mkdir(parents=True, exist_ok=True)
+    (DEST_SKILL_ROOT / "references/handoffs").mkdir(parents=True, exist_ok=True)
     (DEST_SKILL_ROOT / "scripts").mkdir(parents=True, exist_ok=True)
 
     write_text("SKILL.md", build_skill())
@@ -290,9 +202,14 @@ def main() -> None:
         source_text = read_source(f"references/{filename}")
         write_text(f"references/{filename}", adapt_text(source_text))
 
+    for filename in HANDOFF_FILES:
+        source_text = read_source(f"references/handoffs/{filename}")
+        write_text(f"references/handoffs/{filename}", adapt_text(source_text))
+
     validator_source = SOURCE_SKILL_ROOT / "scripts/validate_planner_docs.py"
     validator_dest = DEST_SKILL_ROOT / "scripts/validate_planner_docs.py"
     validator_text = adapt_text(validator_source.read_text(encoding="utf-8"))
+    validator_text = validator_text.replace("Validate KimiQB Planner-docs outputs.", "Validate KimiQB Planner-docs outputs.")
     validator_dest.write_text(validator_text, encoding="utf-8")
     shutil.copymode(validator_source, validator_dest)
 

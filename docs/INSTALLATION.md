@@ -8,8 +8,6 @@ KimiQB is distributed as a Kimi Code plugin repository.
 - A new Kimi Code session after installation so `/skill:kimiqb` is loaded into context.
 - GitHub access to `alicankiraz1/KimiQB` when installing from GitHub.
 
-If this repository is private, installation only works for users and machines that can access the repository.
-
 ## Install From A Local Checkout
 
 Open Kimi Code in any project and run:
@@ -27,7 +25,7 @@ Then test the skill:
 /skill:kimiqb inspect this repo and plan this project
 ```
 
-The installed skill should mention vibecoding-first planning, optional `Planner-docs/Autopsy.md`, optional `Planner-docs/Project-Ontology.md`, and optional `Planner-docs/Planing-Ledger.md` during the relevant workflow steps.
+The installed skill should mention vibecoding-first planning, optional `Planner-docs/Autopsy.md`, optional `Planner-docs/Project-Ontology.md`, optional `Planner-docs/Project-Comprehension.md`, optional `Planner-docs/Planing-Ledger.md`, and canonical handoffs under `references/handoffs/`.
 
 ## Install From GitHub
 
@@ -48,7 +46,7 @@ Then test:
 
 ## Managed Copy Behavior
 
-Kimi Code copies installed plugins to `$KIMI_CODE_HOME/plugins/managed/<id>/`. Editing this source checkout after installation does not update the installed plugin. Reinstall KimiQB after source changes:
+Kimi Code copies installed plugins to `$KIMI_CODE_HOME/plugins/managed/<id>/`. Editing this source checkout after installation does not update the loaded plugin. Reinstall KimiQB after source changes:
 
 ```text
 /plugins install /path/to/KimiQB
@@ -56,7 +54,23 @@ Kimi Code copies installed plugins to `$KIMI_CODE_HOME/plugins/managed/<id>/`. E
 /new
 ```
 
-If the local Kimi plugin manager already tracks this checkout as a managed local-path install, update it with the same install command from the source checkout path and reload Kimi Code. For maintenance automation, verify the managed copy by comparing tracked source files with `$KIMI_CODE_HOME/plugins/managed/kimiqb/` after reinstall.
+For maintenance automation, sync the managed copy with cache excludes and then verify parity:
+
+```bash
+rsync -a --delete \
+  --exclude '.git/' \
+  --exclude '__pycache__/' \
+  --exclude '*.pyc' \
+  --exclude '.pytest_cache/' \
+  --exclude '.mypy_cache/' \
+  --exclude '.ruff_cache/' \
+  --exclude 'KimiQB-sanitized.zip' \
+  /path/to/KimiQB/ "$KIMI_CODE_HOME/plugins/managed/kimiqb/"
+diff -ru -x __pycache__ -x '*.pyc' -x .git -x .pytest_cache -x .mypy_cache -x .ruff_cache \
+  /path/to/KimiQB/ "$KIMI_CODE_HOME/plugins/managed/kimiqb/"
+```
+
+After syncing, use `/plugins reload` or start `/new`; otherwise Kimi Code may continue using a stale in-memory skill.
 
 ## Verify Installation
 
@@ -73,10 +87,11 @@ Expected behavior:
 3. It asks for `PROJECT_INTENT`, ideally with a repo-derived draft.
 4. It asks for `TARGET_END_STATE`, ideally across product, engineering, operations, security, and user value.
 5. It asks for `KNOWN_CONSTRAINTS`, including detected stack, infra, validation, security, and unknown constraints.
-6. It uses the confirmed values to create or update `Planner-docs/Main-Planing.md`.
-7. For existing or partially built repositories, it may create or update `Planner-docs/Autopsy.md` as Step 1.5.
-8. When enough evidence exists, it may create or update `Planner-docs/Project-Ontology.md`.
-9. During implementation handoff, Step 4 should treat `Planner-docs/Planing-Ledger.md` as optional continuity memory and update it after verified slices.
+6. It creates or updates `Planner-docs/Main-Planing.md`.
+7. For existing repositories, it may create or update `Planner-docs/Autopsy.md`.
+8. When enough evidence exists, it may create or update `Planner-docs/Project-Ontology.md` and `Planner-docs/Project-Comprehension.md`.
+9. Step 2 and Step 3 handoffs use `handoff_contract_version: 1`.
+10. Step 4 should treat `Planner-docs/Planing-Ledger.md` as Ledger v2 continuity memory and update it after verified slices.
 
 ## Troubleshooting
 

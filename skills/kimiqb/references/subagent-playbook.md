@@ -28,6 +28,22 @@ Read-only by default. Checks secret safety, command execution risk, approval gat
 
 Read-only. Extracts domain vocabulary, entities, workflows, module boundaries, invariants, integrations, and open concept questions.
 
+### structure_mapper
+
+Read-only. Maps entrypoints, modules, tests, CI, persistence, deployment/runtime surfaces, and likely ownership boundaries for Step 1.5 comprehension.
+
+### concept_trace_mapper
+
+Read-only. Maps domain concepts or features to entrypoints, core implementation, state/data, tests, docs, and uncertainty using `TRACE-*` evidence.
+
+### behavior_evidence_auditor
+
+Read-only unless explicitly asked otherwise. Checks tests, smoke paths, runtime-only behavior claims, executable evidence, and missing validation probes.
+
+### history_architecture_auditor
+
+Read-only. Uses bounded git history, docs, config, and source relations to identify churn, co-change signals, intended-vs-implemented architecture drift, and `ARC-*` candidates.
+
 ### phase_planner
 
 Planning-only. Drafts sub-phase options for one phase or a small phase cluster. Parent consolidates final sub-plan files.
@@ -63,3 +79,24 @@ Do not spawn subagents when:
 - Do not let multiple subagents write the same file.
 - Only one writer should modify files for a Step 4 implementation slice unless the user explicitly requests parallel branches.
 - Parent agent must consolidate subagent results and cite or summarize evidence before writing final artifacts.
+
+## Required Result Format
+
+Every subagent should return this structured shape:
+
+```yaml
+role:
+question_ids_answered:
+scope:
+files_inspected:
+claims:
+  - claim:
+    evidence:
+    confidence:
+contradictions:
+open_questions:
+recommended_parent_action:
+should_block:
+```
+
+The parent agent owns final synthesis and official artifact writes.

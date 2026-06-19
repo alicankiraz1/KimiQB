@@ -52,12 +52,17 @@ class DocumentationTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             self.assertIn("Generated Planner-docs artifacts are English by default", text, path)
             self.assertIn("Required document headings remain English", text, path)
+            self.assertIn("artifact_schema_version: 2", text, path)
+            self.assertIn("handoff_contract_version: 1", text, path)
 
     def test_maintaining_docs_include_release_validation(self) -> None:
         maintaining = (REPO_ROOT / "docs/MAINTAINING.md").read_text(encoding="utf-8")
         self.assertIn("make check", maintaining)
         self.assertIn("KimiQB-sanitized.zip", maintaining)
         self.assertIn("CodexQB source is read-only", maintaining)
+        self.assertIn("fixture corpus", maintaining.lower())
+        self.assertIn("/plugins reload", maintaining)
+        self.assertIn("/new", maintaining)
 
 
 if __name__ == "__main__":

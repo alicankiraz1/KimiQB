@@ -13,7 +13,7 @@ prompt; they clarify reliability practices observed from first real use.
 ## Step 1 Repo-Aware Intake
 
 - Run a bounded read-only repository scan before asking the four Step 1 fields.
-- Use `references/repo-aware-intake.md` to infer helpful defaults, but do not treat inferred values as final until the user confirms or edits them.
+- Use `${KIMI_SKILL_DIR}/references/repo-aware-intake.md` to infer helpful defaults, but do not treat inferred values as final until the user confirms or edits them.
 - Keep the intake conversational and sequential: one plain-text question at a time.
 - If the repository is empty or evidence is weak, say so and fall back to concise generic questions.
 - Do not let the pre-intake scan replace the full Step 1 inspection required by `First-Planner.md`.
@@ -21,7 +21,7 @@ prompt; they clarify reliability practices observed from first real use.
 ## Step 1.5 Autopsy
 
 - Run Step 1.5 only for existing or partially built projects with meaningful repo evidence.
-- Use `references/Autopsy-Planner.md` and write only `Planner-docs/Autopsy.md`.
+- Use `${KIMI_SKILL_DIR}/references/Autopsy-Planner.md` and write only `Planner-docs/Autopsy.md`.
 - Treat `Autopsy.md` as Step 2 feedback, not as a replacement for `Main-Planing.md`.
 - Skip Autopsy for new or nearly empty repositories; do not create a speculative autopsy file.
 - Step 2 must read `Autopsy.md` when it exists and must not block when it is absent.
@@ -29,14 +29,14 @@ prompt; they clarify reliability practices observed from first real use.
 
 ## Vibecoding-First Planning
 
-- Read `references/vibecoding-principles.md` before long planning or implementation handoffs.
+- Read `${KIMI_SKILL_DIR}/references/vibecoding-principles.md` before long planning or implementation handoffs.
 - Prefer the next useful verified move over an over-specified speculative plan.
 - Every phase/sub-plan should help identify small reversible slices, fast validation signals, explicit deferrals, and safety boundaries.
 - Vibecoding does not relax validation, secret safety, approval gates, file boundaries, or secure coding expectations.
 
 ## Subagent Discipline
 
-- Read `references/subagent-playbook.md` when repo size, phase count, audit surface, or Step 4 implementation complexity justifies subagents.
+- Read `${KIMI_SKILL_DIR}/references/subagent-playbook.md` when repo size, phase count, audit surface, or Step 4 implementation complexity justifies subagents.
 - Subagents are useful for read-only repo exploration, readiness/security review, ontology mapping, phase drafting, audit review, and Step 4 implementation/review separation.
 - Parent KimiQB owns final artifact writes. Do not let multiple subagents write the same planning artifact.
 - Do not spawn subagents for trivial single-file planning tasks.

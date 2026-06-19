@@ -4,4 +4,6 @@ check:
 	bash scripts/validate.sh
 
 export-sanitized:
-	git archive --format=zip --output KimiQB-sanitized.zip HEAD
+	git diff --quiet
+	git diff --cached --quiet
+	git archive --format=zip --prefix=KimiQB/ --output KimiQB-sanitized.zip HEAD -- . ':(exclude)docs/superpowers/plans'

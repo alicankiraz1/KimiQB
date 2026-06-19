@@ -21,9 +21,17 @@ required_files=(
   "skills/kimiqb/references/subagent-playbook.md"
   "skills/kimiqb/references/planning-ledger.md"
   "skills/kimiqb/references/project-ontology.md"
+  "skills/kimiqb/references/project-comprehension-methods.md"
+  "skills/kimiqb/references/probe-policy.md"
+  "skills/kimiqb/references/handoffs/run-step2.md"
+  "skills/kimiqb/references/handoffs/run-step3.md"
+  "skills/kimiqb/references/handoffs/run-step4.md"
   "skills/kimiqb/references/assessment-and-budget.md"
   "skills/kimiqb/references/engineering-principles.md"
+  "evals/run_fixture_corpus_checks.py"
+  "evals/run_fixture_checks.py"
   "README.md"
+  "CHANGELOG.md"
   "docs/INSTALLATION.md"
   "docs/USAGE.md"
   "docs/MAINTAINING.md"
@@ -98,6 +106,9 @@ needles = (
     "agents/openai.yaml",
     "Hedefi Takip Et",
     "Goal mode",
+    "Goal Mode",
+    "Goal Run Contract",
+    "Goal-mode",
     "You are Codex",
     "project-planner",
     "Antigravity",
@@ -317,6 +328,8 @@ if [[ "${KIMIQB_VALIDATE_SKIP_UNITTESTS:-0}" == "1" ]]; then
 else
   python3 -m unittest discover -s tests -v
 fi
+
+python3 evals/run_fixture_corpus_checks.py
 
 if command -v kimi >/dev/null 2>&1; then
   kimi --version

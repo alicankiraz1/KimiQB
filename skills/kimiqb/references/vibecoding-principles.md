@@ -42,6 +42,6 @@ Each plan should help a coding agent answer:
 
 ## Long-Running Kimi Code Session Fit
 
-Long KimiQB runs should be phrased as new Kimi Code session work: define the outcome, unchanged boundaries, validation checkpoints, stop gates, and the final summary expected from the agent.
+Long KimiQB runs should be phrased as Kimi Code long-session work: define the outcome, unchanged boundaries, validation checkpoints, stop gates, and the final summary expected from the agent.
 
 A good Kimi Code session handoff is larger than one prompt but smaller than an unbounded backlog.

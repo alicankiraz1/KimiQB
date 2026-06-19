@@ -1,7 +1,7 @@
 {
   "name": "kimiqb",
-  "version": "0.1.0",
-  "description": "KimiQB packages a vibecoding-first Kimi Code planning workflow with an existing-project autopsy, ontology, ledger memory, subagent-aware QA, and gated implementation handoff.",
+  "version": "0.2.1",
+  "description": "KimiQB packages a vibecoding-first Kimi Code planning workflow with project comprehension, evidence traceability, ontology, Ledger v2 continuity, and gated implementation handoffs.",
   "keywords": [
     "kimi-code",
     "planning",
@@ -10,7 +10,10 @@
     "repo-analysis",
     "vibecoding",
     "ontology",
-    "ledger"
+    "ledger",
+    "comprehension",
+    "traceability",
+    "gate-integrity"
   ],
   "author": "Alican Kiraz",
   "homepage": "https://github.com/alicankiraz1/KimiQB",
@@ -18,8 +21,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "KimiQB",
-    "shortDescription": "Vibecoding-first planning workflow for Kimi Code",
-    "longDescription": "KimiQB helps Kimi Code inspect a repository, ask repo-aware intake questions, create a master project plan, autopsy existing project state, preserve ontology and ledger context, decompose the plan into phase-level sub-plans, audit the planning package for coverage and readiness, then print a gated implementation handoff when the audit allows it.",
+    "shortDescription": "Gate-aware planning workflow for Kimi Code",
+    "longDescription": "KimiQB helps Kimi Code inspect a repository, ask repo-aware intake questions, create a master project plan, autopsy existing project state, preserve project comprehension, ontology, and Ledger v2 continuity, decompose the plan into phase-level sub-plans, audit evidence traceability and readiness, then print canonical gated handoffs when the audit allows implementation.",
     "developerName": "Alican Kiraz",
     "websiteURL": "https://github.com/alicankiraz1/KimiQB"
   }

@@ -185,7 +185,7 @@ KNOWN_CONSTRAINTS saved: <brief normalized summary>.
 
 When all four fields are confirmed:
 
-1. Read `references/First-Planner.md`.
+1. Read `${KIMI_SKILL_DIR}/references/First-Planner.md`.
 2. Substitute the confirmed field values.
 3. Treat user-confirmed field values as source of truth.
 4. Treat repo-inferred intake notes as supporting context only.
@@ -194,4 +194,4 @@ When all four fields are confirmed:
 
 ## Vibecoding and Continuity Note
 
-When prior `Planner-docs/Planing-Ledger.md` or `Planner-docs/Project-Ontology.md` exists, summarize their relevance briefly in the intake. Do not treat them as final truth; use them to ask better questions and to avoid losing prior implementation context.
+When prior `Planner-docs/Planing-Ledger.md`, `Planner-docs/Project-Ontology.md`, or `Planner-docs/Project-Comprehension.md` exists, summarize their relevance briefly in the intake. Do not treat them as final truth; use them to ask better questions and to avoid losing prior implementation context.
