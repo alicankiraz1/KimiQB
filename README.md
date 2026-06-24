@@ -4,9 +4,11 @@
 
 Current package contract:
 
-- `version: 0.2.1`
-- `artifact_schema_version: 2`
-- `handoff_contract_version: 1`
+- `version: 0.3.0`
+- `artifact_schema_version: 3`
+- `handoff_contract_version: 2`
+- `kimi_session_run_schema_version: 1`
+- `apply_run_schema_version: 1`
 - Repository: `https://github.com/alicankiraz1/KimiQB`
 
 KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another content language. Required document headings remain English for validator stability.
@@ -21,11 +23,11 @@ KimiQB asks intake questions in the user's language when practical. Generated Pl
 - Semantic Step 4 queue gates: `READY`, `READY_WITH_WARNINGS`, `BLOCKED`, and `NO_ACTION_REQUIRED`.
 - Dependency-free validation and a deterministic fixture corpus for gate-integrity checks.
 
-## 0.2.1 Gate Integrity
+## 0.3.0 Session And Apply Integrity
 
-KimiQB 0.2.1 ports the CodexQB gate-integrity planner behavior into a Kimi Code plugin without copying Codex-only runtime surfaces. Public use stays Kimi-facing: install through Kimi Code plugins, invoke with `/skill:kimiqb`, keep planner helpers under `${KIMI_SKILL_DIR}`, and reload with `/plugins reload` or `/new` after updates.
+KimiQB 0.3.0 ports the current gate-integrity, session-compiler, and apply-run artifact behavior into a Kimi Code plugin without copying Codex-only runtime surfaces. Public use stays Kimi-facing: install through Kimi Code plugins, invoke with `/skill:kimiqb`, keep planner helpers under `${KIMI_SKILL_DIR}`, and reload with `/plugins reload` or `/new` after updates.
 
-The 0.2.1 contract focuses on planner artifact quality:
+The 0.3.0 contract focuses on planner artifact quality plus deterministic execution handoff artifacts:
 
 - required English headings for generated Planner-docs artifacts so validation is stable across user languages;
 - optional project comprehension checks for evidence, confidence, traceability, architecture reflexion, quality scenarios, and open hypotheses;
@@ -33,6 +35,8 @@ The 0.2.1 contract focuses on planner artifact quality:
 - Step 3 preflight validation before audit writing;
 - semantic Step 4 readiness gates, including `NO_ACTION_REQUIRED`;
 - unsafe target-path rejection and strict Step 4 migration rules;
+- canonical Kimi Code session prompt compilation via `session_run.py`;
+- gated direct or `kimi_session_serial` apply-run artifacts via `apply_run.py`;
 - deterministic fixture-corpus coverage for representative planning states.
 
 ## Workflow
@@ -46,6 +50,24 @@ The 0.2.1 contract focuses on planner artifact quality:
 | 4. Gated Handoff | Prints the implementation-session prompt only when audit and validator gates allow it. | Text-only Kimi Code session handoff, optional ledger updates during implementation |
 
 Steps 2, 3, and 4 are intentionally handed off as text prompts for new Kimi Code sessions unless the user explicitly asks for a direct run.
+
+## Session And Apply Artifacts
+
+Maintainers and advanced local workflows can compile deterministic Kimi Code session prompts without invoking Kimi Code:
+
+```bash
+python3 skills/kimiqb/scripts/session_run.py prepare --root /path/to/project --stage step4 --mode kimi_session_serial
+python3 skills/kimiqb/scripts/session_run.py validate --root /path/to/project --session-run /path/to/Session-Run.json
+```
+
+When Step 4 is allowed by the audit, the apply controller can prepare artifact-level run state for direct parent execution or one-fresh-session-at-a-time implementation:
+
+```bash
+python3 skills/kimiqb/scripts/apply_run.py prepare --root /path/to/project --mode direct
+python3 skills/kimiqb/scripts/apply_run.py prepare --root /path/to/project --mode kimi_session_serial
+```
+
+These helpers create local artifacts only. They do not call Kimi Code, push, open pull requests, deploy, or mutate external systems.
 
 ## Quick Start
 
@@ -132,6 +154,9 @@ Before pushing a KimiQB release or syncing a managed plugin copy, run the local 
 
 ```bash
 python3 evals/run_fixture_corpus_checks.py
+python3 evals/run_apply_behavior_smoke.py
+python3 evals/run_downstream_session_apply_dry_run.py
+python3 evals/run_session_apply_metric_checks.py
 python3 -m unittest discover -s tests -v
 make check
 git diff --check
@@ -172,12 +197,19 @@ skills/kimiqb/
       run-step4.md
     project-comprehension-methods.md
     probe-policy.md
+    session-compiler.md
+    apply-orchestrator.md
+    apply-run-schema.json
+    session-specs/
+    apply/
 docs/
   INSTALLATION.md
   MAINTAINING.md
   USAGE.md
 scripts/
   adapt_from_codexqb.py
+  check_public_privacy.py
+  export_sanitized.py
   validate.sh
 tests/
 CHANGELOG.md

@@ -7,7 +7,8 @@ Planner-docs/Main-Planing.md
 
 Step 2 produced:
 Planner-docs/Sub-Planing-Index.md
-Planner-docs/Faz-<number>-Plans/Faz<number>.<subnumber>-<slug>.md
+Planner-docs/Faz-<number>-Plans/Faz<number>.<subnumber>-<slug>.md for active phases
+deferred roadmap cards in Planner-docs/Sub-Planing-Index.md for deferred phases
 
 Your job in Step 3:
 Audit and analyze the Step 2 sub-planning output.
@@ -76,7 +77,7 @@ Language:
 Write Planner-docs/Sub-Planing-Audit.md in English by default unless the user explicitly requests another content language. Required document headings remain English for validator stability.
 
 Kimi Code session handoff source:
-Read and return the exact canonical handoff from `${KIMI_SKILL_DIR}/references/handoffs/run-step3.md` when the user asks for Step 3 Kimi Code session text. Do not duplicate the full Kimi Code Session Contract in this file.
+Read and return the exact canonical handoff from `references/handoffs/run-step3.md` when the user asks for Step 3 new Kimi Code session text. Do not duplicate the full Kimi Code Session Contract in this file.
 
 Repository inspection requirements:
 
@@ -137,9 +138,11 @@ Audit objectives:
 You must evaluate:
 
 1. Phase coverage
-- Every main phase in Main-Planing.md must have a matching Planner-docs/Faz-<number>-Plans/ folder.
-- Every main phase must have at least one sub-plan file.
-- No major phase should be silently missing.
+- Every main phase in Main-Planing.md must be classified exactly once as active or deferred in the Planning Scope Manifest.
+- Every active phase must have a matching Planner-docs/Faz-<number>-Plans/ folder and at least one implementation-ready sub-plan file.
+- Every deferred phase must have a roadmap card with deferral reason, activation trigger, and earliest wave.
+- Deferred phases should not have detailed folders unless the index explicitly justifies why.
+- No major phase should be silently missing from both active and deferred coverage.
 - No generated phase folder should exist without a corresponding main phase unless clearly justified.
 
 2. Phase order consistency
@@ -168,8 +171,12 @@ Check:
 Check Planner-docs/Sub-Planing-Index.md against actual files.
 
 Verify:
-- It references all phase folders.
+- It contains a valid Planning Scope Manifest.
+- Active and deferred phases together cover every Main-Planing.md phase exactly once.
+- It references all active phase folders.
 - It references all generated sub-plan files.
+- It contains a deferred roadmap card for every deferred phase.
+- It contains Execution Waves, Parent Acceptance Traceability, and Decision Register entries.
 - It does not reference missing files.
 - It does not omit existing sub-plan files.
 - Detected phase count matches Main-Planing.md.
@@ -320,14 +327,17 @@ Do not include secrets.
 
 ## 3. Main Phase Coverage Analysis
 
-Create a table comparing Main-Planing.md phases to generated folders and sub-plans.
+Create a table comparing Main-Planing.md phases to active folders, sub-plans, and deferred cards.
 
 Columns:
 - Main phase no
 - Main phase heading
+- Planning status: active, deferred, missing, or extra
 - Expected folder
 - Folder exists?
 - Sub-plan count
+- Deferred card exists?
+- Activation trigger
 - Coverage status
 - Notes
 
@@ -368,9 +378,12 @@ If no issues, explicitly say no naming/order issues were found.
 Compare Sub-Planing-Index.md to actual files.
 
 Report:
+- Planning Scope Manifest errors;
 - missing references;
 - broken references;
 - unindexed files;
+- missing deferred cards;
+- missing or invalid Execution Waves, Parent Acceptance Traceability, or Decision Register rows;
 - phase count mismatch;
 - inaccurate coverage claims;
 - questionable execution order.
@@ -401,6 +414,9 @@ Analyze:
 - whether dependencies are explicit;
 - whether the plan is suitable for vibecoding-first small verified slices;
 - whether token/context risk and subagent usefulness are clear where relevant.
+- whether active sub-plans include valid machine-readable implementation contracts;
+- whether Framework Ownership Matrix is present and uses the required `Capability | External Framework Owns | Project Owns | Wrapper Boundary | Validation` table for projects using external frameworks such as TRL, vLLM, or PEFT;
+- whether Algorithmic Invariant Register is present and uses the required `Invariant ID | Scope | Required Condition | Violation Risk | Validation Probe` table for online, RL, stateful, cached, resumed, distributed, financial, or security-sensitive workflows.
 
 Be direct. If the docs are generic, over-specified, or not useful for coding agents, say so.
 
@@ -566,7 +582,7 @@ After creating/updating Planner-docs/Sub-Planing-Audit.md:
 4. Do not run grep/ripgrep scans that print matched secret-bearing lines. The validator in step 3 already performs redacted secret detection. If a fallback scan is unavoidable, use file-name-only output such as `rg -l` and never copy matched values into the audit.
 
 5. Run:
-   python3 skills/kimiqb/scripts/validate_planner_docs.py --root . --mode step4
+   python3 skills/kimiqb/scripts/validate_planner_docs.py --root . --mode step4 --strict
 
 6. Run:
    git diff -- Planner-docs/Sub-Planing-Audit.md
@@ -578,7 +594,7 @@ After creating/updating Planner-docs/Sub-Planing-Audit.md:
 
 9. If any file outside Planner-docs/Sub-Planing-Audit.md changed, report it as unexpected and do not attempt to fix unless explicitly asked.
 
-Long-session behavior:
+Kimi Code session behavior:
 
 This is a long audit task. Continue until the audit is complete.
 

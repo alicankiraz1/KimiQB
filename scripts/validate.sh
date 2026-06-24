@@ -9,12 +9,28 @@ python3 -m json.tool kimi.plugin.json >/dev/null
 required_files=(
   "kimi.plugin.json"
   "skills/kimiqb/SKILL.md"
+  "skills/kimiqb/scripts/safety_contracts.py"
   "skills/kimiqb/scripts/validate_planner_docs.py"
+  "skills/kimiqb/scripts/session_run.py"
+  "skills/kimiqb/scripts/apply_run.py"
   "skills/kimiqb/references/First-Planner.md"
   "skills/kimiqb/references/Autopsy-Planner.md"
   "skills/kimiqb/references/Second-Planner.md"
   "skills/kimiqb/references/Third-Planner.md"
   "skills/kimiqb/references/Fourth-Planner.md"
+  "skills/kimiqb/references/session-compiler.md"
+  "skills/kimiqb/references/apply-orchestrator.md"
+  "skills/kimiqb/references/apply-run-schema.json"
+  "skills/kimiqb/references/apply/controller.md"
+  "skills/kimiqb/references/apply/implementer.md"
+  "skills/kimiqb/references/apply/task-reviewer.md"
+  "skills/kimiqb/references/apply/security-reviewer.md"
+  "skills/kimiqb/references/apply/fixer.md"
+  "skills/kimiqb/references/apply/final-reviewer.md"
+  "skills/kimiqb/references/session-specs/step15.md"
+  "skills/kimiqb/references/session-specs/step2.md"
+  "skills/kimiqb/references/session-specs/step3.md"
+  "skills/kimiqb/references/session-specs/step4.md"
   "skills/kimiqb/references/repo-aware-intake.md"
   "skills/kimiqb/references/workflow-quality.md"
   "skills/kimiqb/references/vibecoding-principles.md"
@@ -28,8 +44,13 @@ required_files=(
   "skills/kimiqb/references/handoffs/run-step4.md"
   "skills/kimiqb/references/assessment-and-budget.md"
   "skills/kimiqb/references/engineering-principles.md"
+  "evals/run_apply_behavior_smoke.py"
+  "evals/run_downstream_session_apply_dry_run.py"
+  "evals/run_session_apply_metric_checks.py"
   "evals/run_fixture_corpus_checks.py"
   "evals/run_fixture_checks.py"
+  "scripts/export_sanitized.py"
+  "scripts/check_public_privacy.py"
   "README.md"
   "CHANGELOG.md"
   "docs/INSTALLATION.md"
@@ -126,6 +147,7 @@ ignored_parts = {
     "tmp",
 }
 ignored_paths = {
+    "kimi-gelistirme2506.md",
     "scripts/adapt_from_codexqb.py",
     "scripts/validate.sh",
 }
@@ -330,6 +352,14 @@ else
 fi
 
 python3 evals/run_fixture_corpus_checks.py
+
+if [[ "${KIMIQB_VALIDATE_SKIP_BEHAVIOR_SMOKE:-0}" == "1" ]]; then
+  echo "behavior_smoke_skipped=1"
+else
+  python3 evals/run_apply_behavior_smoke.py
+  python3 evals/run_downstream_session_apply_dry_run.py
+  python3 evals/run_session_apply_metric_checks.py
+fi
 
 if command -v kimi >/dev/null 2>&1; then
   kimi --version

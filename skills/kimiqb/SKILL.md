@@ -1,6 +1,6 @@
 ---
 name: kimiqb
-description: Vibecoding-first project planning workflow for Kimi Code. Use to create Planner-docs/Main-Planing.md, run an existing-project autopsy, maintain comprehension, ontology, and ledger context, decompose phases into sub-plans, audit readiness, and print a gated implementation handoff.
+description: Vibecoding-first project planning workflow for Kimi Code. Use to create Planner-docs/Main-Planing.md, run an existing-project autopsy, maintain comprehension, ontology, and ledger context, decompose phases into sub-plans, audit readiness, and print gated session/apply handoffs.
 type: prompt
 whenToUse: When the user asks Kimi Code to plan a software, AI, infrastructure, security, automation, or product repository before implementation.
 disableModelInvocation: false
@@ -20,6 +20,8 @@ The bundled prompts are:
 - `${KIMI_SKILL_DIR}/references/Third-Planner.md` for Step 3 sub-plan QA and coverage audit.
 - `${KIMI_SKILL_DIR}/references/Fourth-Planner.md` for the Step 4 implementation Kimi Code session handoff prompt template.
 - `${KIMI_SKILL_DIR}/references/handoffs/run-step2.md`, `run-step3.md`, and `run-step4.md` as the canonical Kimi Code session handoff sources.
+- `${KIMI_SKILL_DIR}/references/session-compiler.md` for deterministic Kimi Code session prompt artifacts.
+- `${KIMI_SKILL_DIR}/references/apply-orchestrator.md` and `${KIMI_SKILL_DIR}/references/apply-run-schema.json` for Step 4 apply-run artifacts.
 
 Planning behavior references:
 
@@ -35,6 +37,8 @@ Planning behavior references:
 Bundled support files:
 
 - `${KIMI_SKILL_DIR}/scripts/validate_planner_docs.py` for read-only structural validation of `Planner-docs/`.
+- `${KIMI_SKILL_DIR}/scripts/session_run.py` for local Kimi Code session prompt compilation.
+- `${KIMI_SKILL_DIR}/scripts/apply_run.py` for local Step 4 apply-run artifact control.
 - `${KIMI_SKILL_DIR}/references/repo-aware-intake.md` for evidence-backed Step 1 intake questions.
 - `${KIMI_SKILL_DIR}/references/workflow-quality.md` for new Kimi Code session reliability, validation, token discipline, and handoff practices.
 

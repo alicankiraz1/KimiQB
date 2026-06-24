@@ -8,7 +8,7 @@ Use it only after Step 3 writes `Planner-docs/Sub-Planing-Audit.md` and the audi
 references/handoffs/run-step4.md
 ```
 
-Do not duplicate the full Kimi Code Session Contract in this file. When the user asks for Step 4 Kimi Code session text, read and return the exact canonical handoff from `${KIMI_SKILL_DIR}/references/handoffs/run-step4.md`.
+Do not duplicate the full Kimi Code Session Contract in this file. When the user asks for Step 4 new Kimi Code session text, read and return the exact canonical handoff from `references/handoffs/run-step4.md`.
 
 If the audit status is `BLOCKED`, do not print the Step 4 handoff. Print the minimal unblock prompt from the audit instead.
 
@@ -18,13 +18,7 @@ If the audit status is `PASS_WITH_WARNINGS` and any open P0/P1 finding exists, d
 
 If the audit status is `PASS_WITH_WARNINGS` with only open or accepted P2/P3 findings, the canonical handoff may be printed, but state that the implementation run must keep those warnings visible.
 
-Before printing the canonical handoff, run the bundled validator when available:
-
-```bash
-python3 skills/kimiqb/scripts/validate_planner_docs.py --root . --mode step4
-```
-
-For strict execution gates, use:
+Before printing the canonical handoff, run the bundled strict validator when available:
 
 ```bash
 python3 skills/kimiqb/scripts/validate_planner_docs.py --root . --mode step4 --strict
@@ -41,8 +35,8 @@ python3 skills/kimiqb/scripts/validate_planner_docs.py --root . --mode step4 --s
 - Prefer existing repo validation commands over invented commands.
 - Report exact blocker strings and separate code-delivery status from external config or credential blockers.
 - Keep `Planner-docs/Planing-Ledger.md` concise; it is a replanning memory artifact, not a transcript dump.
-- Read `${KIMI_SKILL_DIR}/references/project-comprehension-methods.md` if the active slice depends on evidence confidence, CQ, TRACE, ARC, or HYP rows.
+- Read `references/project-comprehension-methods.md` if the active slice depends on evidence confidence, CQ, TRACE, ARC, or HYP rows.
 - Use `Planner-docs/Project-Ontology.md` to preserve vocabulary, entity, workflow, boundary, integration, and invariant consistency for the active slice.
 - Use `Planner-docs/Project-Comprehension.md` to preserve evidence/confidence, CQ/TRACE/ARC links, and open hypothesis probes for the active slice.
-- Use `${KIMI_SKILL_DIR}/references/probe-policy.md` before running local stateful or external/live probes.
+- Use `references/probe-policy.md` before running local stateful or external/live probes.
 - Do not commit, push, open a PR, deploy, or mutate external systems unless the user explicitly asks in the Step 4 run.

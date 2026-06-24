@@ -293,6 +293,7 @@ Step 2 will break each phase into detailed tasks, acceptance criteria, dependenc
 Include:
 - which phases should be decomposed first;
 - which phases should not be expanded yet;
+- stable parent acceptance signal IDs for every phase using the format `MP-PH<phase>-AS-<two-digit-number>` alongside the exact Main Plan signal text;
 - what evidence Step 2 should collect;
 - what decisions need human confirmation before detailed implementation;
 - what prior implementation history from `Planing-Ledger.md` and evidence/confidence or CQ/TRACE/ARC signals from `Project-Comprehension.md` must be preserved;

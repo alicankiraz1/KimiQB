@@ -29,6 +29,9 @@ REFERENCE_FILES = [
     "Second-Planner.md",
     "Third-Planner.md",
     "Fourth-Planner.md",
+    "goal-compiler.md",
+    "apply-orchestrator.md",
+    "apply-run-schema.json",
     "repo-aware-intake.md",
     "workflow-quality.md",
     "vibecoding-principles.md",
@@ -41,14 +44,42 @@ REFERENCE_FILES = [
     "engineering-principles.md",
 ]
 
+REFERENCE_RENAMES = {
+    "goal-compiler.md": "session-compiler.md",
+}
+
 HANDOFF_FILES = [
     "run-step2.md",
     "run-step3.md",
     "run-step4.md",
 ]
 
+APPLY_REFERENCE_FILES = [
+    "controller.md",
+    "implementer.md",
+    "task-reviewer.md",
+    "security-reviewer.md",
+    "fixer.md",
+    "final-reviewer.md",
+]
+
+SESSION_SPEC_FILES = [
+    "step15.md",
+    "step2.md",
+    "step3.md",
+    "step4.md",
+]
+
+SCRIPT_FILES = [
+    ("safety_contracts.py", "safety_contracts.py"),
+    ("validate_planner_docs.py", "validate_planner_docs.py"),
+    ("goal_run.py", "session_run.py"),
+    ("apply_run.py", "apply_run.py"),
+]
+
 TEXT_REPLACEMENTS = [
     ("codexqb_schema_version", "kimiqb_schema_version"),
+    ("CODEXQB", "KIMIQB"),
     ("Use $codexqb. Run Step", "/skill:kimiqb Run Step"),
     ("Use $codexqb. Read and return", "/skill:kimiqb Read and return"),
     ("Use $codexqb.", "/skill:kimiqb"),
@@ -71,6 +102,10 @@ TEXT_REPLACEMENTS = [
         "skills/kimiqb/scripts/validate_planner_docs.py",
     ),
     ("plugins/kimiqb/skills/kimiqb", "skills/kimiqb"),
+    ("plugins/kimiqb/.codex-plugin/plugin.json", "kimi.plugin.json"),
+    (".codex-plugin/plugin.json", "kimi.plugin.json"),
+    (".codex-plugin", "kimi.plugin.json"),
+    (".codexqb", ".kimiqb"),
     (
         "plugins/codexqb/skills/codexqb/scripts/validate_planner_docs.py",
         "skills/kimiqb/scripts/validate_planner_docs.py",
@@ -116,6 +151,22 @@ TEXT_REPLACEMENTS = [
     ("for `a new Kimi Code session`", "for a new Kimi Code session"),
     ("`a new Kimi Code session`", "a new Kimi Code session"),
     ("codex-security", "security-focused Kimi-compatible skills/plugins"),
+    ("goal-compiler.md", "session-compiler.md"),
+    ("goal-specs", "session-specs"),
+    ("goal_run.py", "session_run.py"),
+    ("Goal-Prompt.md", "Session-Prompt.md"),
+    ("Goal-Run.json", "Session-Run.json"),
+    ("goal_run_status", "session_run_status"),
+    ("goal_run_schema_version", "session_run_schema_version"),
+    ("subagent_serial", "kimi_session_serial"),
+    ("multi_agent_v1.spawn_agent", "kimi_session_dispatch_artifact"),
+    ("external_superpowers", "external_adapter"),
+]
+
+SESSION_TEXT_REPLACEMENTS = [
+    ("GOAL", "SESSION"),
+    ("Goal", "Session"),
+    ("goal", "session"),
 ]
 
 
@@ -149,6 +200,15 @@ def adapt_text(text: str) -> str:
         "open new Kimi Code session",
         "start a new Kimi Code session",
     )
+    return text
+
+
+def adapt_session_text(text: str) -> str:
+    text = adapt_text(text)
+    for old, new in SESSION_TEXT_REPLACEMENTS:
+        text = text.replace(old, new)
+    text = text.replace("Session/Question/Evidence", "Goal/Question/Evidence")
+    text = text.replace("session-oriented", "goal-oriented")
     return text
 
 
@@ -194,24 +254,38 @@ def main() -> None:
         raise SystemExit(f"missing CodexQB source skill root: {SOURCE_SKILL_ROOT}")
 
     (DEST_SKILL_ROOT / "references/handoffs").mkdir(parents=True, exist_ok=True)
+    (DEST_SKILL_ROOT / "references/apply").mkdir(parents=True, exist_ok=True)
+    (DEST_SKILL_ROOT / "references/session-specs").mkdir(parents=True, exist_ok=True)
     (DEST_SKILL_ROOT / "scripts").mkdir(parents=True, exist_ok=True)
 
     write_text("SKILL.md", build_skill())
 
     for filename in REFERENCE_FILES:
         source_text = read_source(f"references/{filename}")
-        write_text(f"references/{filename}", adapt_text(source_text))
+        destination = REFERENCE_RENAMES.get(filename, filename)
+        write_text(f"references/{destination}", adapt_text(source_text))
 
     for filename in HANDOFF_FILES:
         source_text = read_source(f"references/handoffs/{filename}")
         write_text(f"references/handoffs/{filename}", adapt_text(source_text))
 
-    validator_source = SOURCE_SKILL_ROOT / "scripts/validate_planner_docs.py"
-    validator_dest = DEST_SKILL_ROOT / "scripts/validate_planner_docs.py"
-    validator_text = adapt_text(validator_source.read_text(encoding="utf-8"))
-    validator_text = validator_text.replace("Validate KimiQB Planner-docs outputs.", "Validate KimiQB Planner-docs outputs.")
-    validator_dest.write_text(validator_text, encoding="utf-8")
-    shutil.copymode(validator_source, validator_dest)
+    for filename in APPLY_REFERENCE_FILES:
+        source_text = read_source(f"references/apply/{filename}")
+        write_text(f"references/apply/{filename}", adapt_text(source_text))
+
+    for filename in SESSION_SPEC_FILES:
+        source_text = read_source(f"references/goal-specs/{filename}")
+        write_text(f"references/session-specs/{filename}", adapt_session_text(source_text))
+
+    for source_name, destination_name in SCRIPT_FILES:
+        source_path = SOURCE_SKILL_ROOT / "scripts" / source_name
+        destination_path = DEST_SKILL_ROOT / "scripts" / destination_name
+        if source_name == "goal_run.py":
+            script_text = adapt_session_text(source_path.read_text(encoding="utf-8"))
+        else:
+            script_text = adapt_text(source_path.read_text(encoding="utf-8"))
+        destination_path.write_text(script_text, encoding="utf-8")
+        shutil.copymode(source_path, destination_path)
 
     print(f"ported_skill_root={DEST_SKILL_ROOT}")
 

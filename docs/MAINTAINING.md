@@ -4,9 +4,11 @@ This document covers validation and release maintenance for KimiQB.
 
 Current release contract:
 
-- `version: 0.2.1`
-- `artifact_schema_version: 2`
-- `handoff_contract_version: 1`
+- `version: 0.3.0`
+- `artifact_schema_version: 3`
+- `handoff_contract_version: 2`
+- `kimi_session_run_schema_version: 1`
+- `apply_run_schema_version: 1`
 
 ## Dependency-Free Repo Check
 
@@ -16,7 +18,7 @@ Run the default repository validation before every release:
 make check
 ```
 
-This checks the Kimi plugin manifest, required package files, Kimi skill frontmatter, stale public invocation names, tracked-file secret hygiene, archive hygiene, the deterministic fixture corpus, and the Python unit test suite. It intentionally uses only shell and Python standard-library commands so CI does not depend on local Kimi internals.
+This checks the Kimi plugin manifest, required package files, Kimi skill frontmatter, stale public invocation names, tracked-file secret hygiene, archive hygiene, the deterministic fixture corpus, session/apply behavior smokes, and the Python unit test suite. It intentionally uses only shell and Python standard-library commands so CI does not depend on local Kimi internals.
 
 When the repository has no `.git/` metadata, the same script switches to package-level filesystem checks and prints explicit mode labels:
 
@@ -107,6 +109,18 @@ The fixture corpus must contain stable `expected.json` files for:
 - `runtime-only-behavior`
 - `security-boundary-risk`
 
+## Session And Apply Behavior Gates
+
+Run these smoke checks when changing `session_run.py`, `apply_run.py`, Step 4 handoff text, or the apply role templates:
+
+```bash
+python3 evals/run_apply_behavior_smoke.py
+python3 evals/run_downstream_session_apply_dry_run.py
+python3 evals/run_session_apply_metric_checks.py
+```
+
+These checks compile local artifacts and disposable repositories only. They do not call Kimi Code, open pull requests, push, deploy, or mutate external systems.
+
 ## Kimi CLI Smoke
 
 The dependency-free check does not require Kimi Code CLI. If `kimi` is available on PATH, manually smoke the plugin:
@@ -167,7 +181,7 @@ Use the tracked-file export target:
 make export-sanitized
 ```
 
-This target requires a clean index and clean worktree, then writes `KimiQB-sanitized.zip` with a `KimiQB/` archive prefix. It excludes historical `docs/superpowers/plans/` planning notes from the distributable package so stale local planning context is not shipped.
+This target requires a clean index and clean worktree, then writes `KimiQB-sanitized.zip` with a `KimiQB/` archive prefix and `KimiQB/PACKAGE-MANIFEST.json`. The exporter scans tracked files for blocked paths, symlinks, and secret-like content before packaging.
 
 After exporting, smoke the zip without git metadata:
 
@@ -189,12 +203,14 @@ The package-level fallback must not print secret values. It reports only path, l
 6. Update `skills/kimiqb/references/Fourth-Planner.md` and `skills/kimiqb/references/handoffs/run-step4.md` if implementation handoff, queue continuation, stop gates, or ledger behavior changes.
 7. Update `skills/kimiqb/scripts/validate_planner_docs.py` if planner structure, autopsy mode, optional continuity docs, or readiness gates change.
 8. Run `python3 evals/run_fixture_corpus_checks.py`.
-9. Run `make check`.
-10. Run the extracted-package smoke check against `KimiQB-sanitized.zip`.
-11. If Kimi Code CLI is available, reinstall or sync the local plugin, then smoke `/skill:kimiqb`.
-12. Confirm the CodexQB source checkout is still clean.
-13. Commit with a focused message.
-14. Do not push, create a pull request, publish a release, or install into a live shared environment unless explicitly requested.
+9. Run the session/apply behavior gates.
+10. Run `make check`.
+11. Run `make export-sanitized`.
+12. Run the extracted-package smoke check against `KimiQB-sanitized.zip`.
+13. If Kimi Code CLI is available, reinstall or sync the local plugin, then smoke `/skill:kimiqb`.
+14. Confirm the CodexQB source checkout is still clean.
+15. Commit with a focused message.
+16. Do not push, create a pull request, publish a release, or install into a live shared environment unless explicitly requested.
 
 ## Contribution Guidelines
 

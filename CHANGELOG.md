@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- Added deterministic Kimi Code session prompt compilation via `session_run.py`.
+- Added gated apply-run artifact control via `apply_run.py`, including `direct` and `kimi_session_serial` modes.
+- Added apply behavior, downstream session/apply dry-run, and prompt metric smoke gates.
+- Added a stdlib release exporter and public privacy scanner for sanitized package provenance.
+- Bumped the public contract to `artifact_schema_version: 3` and `handoff_contract_version: 2`.
+
 ## 0.2.1
 
 - Ported gate-integrity planner semantics into KimiQB while preserving the Kimi Code plugin shape.

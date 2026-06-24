@@ -106,7 +106,7 @@ The document body is English by default unless the user explicitly requests anot
 
 Use clear headings and a professional engineering-audit tone.
 
-Read `${KIMI_SKILL_DIR}/references/project-comprehension-methods.md` before creating or updating `Planner-docs/Project-Comprehension.md`.
+Read `references/project-comprehension-methods.md` before creating or updating `Planner-docs/Project-Comprehension.md`.
 
 Bounded project-comprehension loop:
 

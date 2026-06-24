@@ -47,11 +47,18 @@ class SkillContentTests(unittest.TestCase):
             "probe-policy.md",
             "assessment-and-budget.md",
             "engineering-principles.md",
+            "session-compiler.md",
+            "apply-orchestrator.md",
+            "apply-run-schema.json",
         ]
         for filename in required:
             self.assertTrue((SKILL_ROOT / "references" / filename).is_file(), filename)
         for filename in ["run-step2.md", "run-step3.md", "run-step4.md"]:
             self.assertTrue((SKILL_ROOT / "references/handoffs" / filename).is_file(), filename)
+        for filename in ["controller.md", "implementer.md", "task-reviewer.md", "security-reviewer.md", "fixer.md", "final-reviewer.md"]:
+            self.assertTrue((SKILL_ROOT / "references/apply" / filename).is_file(), filename)
+        for filename in ["step15.md", "step2.md", "step3.md", "step4.md"]:
+            self.assertTrue((SKILL_ROOT / "references/session-specs" / filename).is_file(), filename)
 
     def test_language_contract_is_documented(self) -> None:
         required_phrases = [
@@ -126,9 +133,9 @@ class SkillContentTests(unittest.TestCase):
         for heading in required_headings:
             self.assertIn(heading, autopsy)
 
-    def test_plugin_metadata_reflects_021_gate_integrity_release(self) -> None:
+    def test_plugin_metadata_reflects_030_session_apply_release(self) -> None:
         manifest_text = (REPO_ROOT / "kimi.plugin.json").read_text(encoding="utf-8")
-        self.assertIn('"version": "0.2.1"', manifest_text)
+        self.assertIn('"version": "0.3.0"', manifest_text)
         for phrase in [
             "project comprehension",
             "evidence",
@@ -137,6 +144,8 @@ class SkillContentTests(unittest.TestCase):
             "ontology",
             "ledger",
             "gate",
+            "session",
+            "apply",
         ]:
             self.assertIn(phrase, manifest_text.lower())
 
@@ -192,7 +201,7 @@ class SkillContentTests(unittest.TestCase):
             path = handoff_root / name
             self.assertTrue(path.is_file(), name)
             text = path.read_text(encoding="utf-8")
-            self.assertIn("contract_version: 1", text)
+            self.assertIn("contract_version: 2", text)
             self.assertIn("Kimi Code Session Contract", text)
             self.assertIn("Resume / Recovery Protocol", text)
             for phrase in [
@@ -258,10 +267,9 @@ class SkillContentTests(unittest.TestCase):
         self.assertIn("push:", workflow)
         self.assertIn("pull_request:", workflow)
         self.assertNotIn("branches: [main]", workflow)
-        self.assertIn("git diff --quiet", makefile)
-        self.assertIn("git diff --cached --quiet", makefile)
-        self.assertIn("--prefix=KimiQB/", makefile)
-        self.assertIn(":(exclude)docs/superpowers/plans", makefile)
+        self.assertIn("scripts/export_sanitized.py", makefile)
+        self.assertIn("KimiQB-sanitized.zip", makefile)
+        self.assertIn("check-public-privacy", makefile)
 
     def test_fixture_corpus_infrastructure_is_present(self) -> None:
         runner = REPO_ROOT / "evals/run_fixture_corpus_checks.py"
@@ -295,8 +303,8 @@ class SkillContentTests(unittest.TestCase):
 
         for path in [REPO_ROOT / "README.md", REPO_ROOT / "docs/USAGE.md", REPO_ROOT / "docs/MAINTAINING.md"]:
             text = path.read_text(encoding="utf-8")
-            self.assertIn("artifact_schema_version: 2", text, path.name)
-            self.assertIn("handoff_contract_version: 1", text, path.name)
+            self.assertIn("artifact_schema_version: 3", text, path.name)
+            self.assertIn("handoff_contract_version: 2", text, path.name)
             self.assertIn("fixture corpus", text.lower(), path.name)
 
     def test_local_skill_sync_docs_exclude_python_caches(self) -> None:
@@ -346,7 +354,9 @@ class SkillContentTests(unittest.TestCase):
         checked_files = [
             SKILL_ROOT / "SKILL.md",
             *sorted((SKILL_ROOT / "references").glob("*.md")),
+            *sorted((SKILL_ROOT / "references/apply").glob("*.md")),
             *sorted((SKILL_ROOT / "references/handoffs").glob("*.md")),
+            *sorted((SKILL_ROOT / "references/session-specs").glob("*.md")),
         ]
         for path in checked_files:
             text = path.read_text(encoding="utf-8")
@@ -355,7 +365,7 @@ class SkillContentTests(unittest.TestCase):
 
     def test_fourth_planner_mentions_optional_kimi_execution_skills(self) -> None:
         fourth = (SKILL_ROOT / "references/handoffs/run-step4.md").read_text(encoding="utf-8")
-        self.assertIn("if installed/available", fourth)
+        self.assertIn("if installed/available", fourth.lower())
         self.assertIn("Kimi Code", fourth)
         self.assertIn("superpowers:executing-plans", fourth)
         self.assertIn("security-focused Kimi-compatible skills/plugins", fourth)

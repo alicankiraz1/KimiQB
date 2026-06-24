@@ -90,7 +90,7 @@ Expected behavior:
 6. It creates or updates `Planner-docs/Main-Planing.md`.
 7. For existing repositories, it may create or update `Planner-docs/Autopsy.md`.
 8. When enough evidence exists, it may create or update `Planner-docs/Project-Ontology.md` and `Planner-docs/Project-Comprehension.md`.
-9. Step 2 and Step 3 handoffs use `handoff_contract_version: 1`.
+9. Step 2, Step 3, and Step 4 handoffs use `handoff_contract_version: 2`.
 10. Step 4 should treat `Planner-docs/Planing-Ledger.md` as Ledger v2 continuity memory and update it after verified slices.
 
 ## Troubleshooting

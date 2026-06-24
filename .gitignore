@@ -11,6 +11,7 @@ artifacts/
 logs/
 tmp/
 *.zip
+kimi-gelistirme2506.md
 .env
 .env.*
 !.env.example

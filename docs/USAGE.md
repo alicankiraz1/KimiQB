@@ -6,8 +6,10 @@ For large repositories, KimiQB may use subagent-aware guidance to separate explo
 
 Package contract:
 
-- `artifact_schema_version: 2`
-- `handoff_contract_version: 1`
+- `artifact_schema_version: 3`
+- `handoff_contract_version: 2`
+- `kimi_session_run_schema_version: 1`
+- `apply_run_schema_version: 1`
 
 KimiQB asks intake questions in the user's language when practical. Generated Planner-docs artifacts are English by default unless the user explicitly requests another content language. Required document headings remain English for validator stability.
 
@@ -158,6 +160,24 @@ Semantic queue statuses:
 - `NO_ACTION_REQUIRED`
 
 When implementation does run, it should append or update `Planner-docs/Planing-Ledger.md` with concise verified-slice or stop-event summaries. The ledger is a replanning memory artifact, not a transcript dump.
+
+### Local Session And Apply Helpers
+
+The bundled session compiler can prepare a deterministic Kimi Code prompt from validated Planner-docs:
+
+```bash
+python3 skills/kimiqb/scripts/session_run.py prepare --root /path/to/project --stage step4 --mode kimi_session_serial
+python3 skills/kimiqb/scripts/session_run.py validate --root /path/to/project --session-run /path/to/Session-Run.json
+```
+
+The bundled apply controller can prepare artifact state for parent-controlled implementation:
+
+```bash
+python3 skills/kimiqb/scripts/apply_run.py prepare --root /path/to/project --mode direct
+python3 skills/kimiqb/scripts/apply_run.py prepare --root /path/to/project --mode kimi_session_serial
+```
+
+Both helpers are local artifact compilers. They do not call Kimi Code, push, open pull requests, deploy, or mutate external systems.
 
 ## Direct Step Invocation
 
