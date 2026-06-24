@@ -21,6 +21,20 @@ KimiQB asks intake questions in the user's language when practical. Generated Pl
 - Semantic Step 4 queue gates: `READY`, `READY_WITH_WARNINGS`, `BLOCKED`, and `NO_ACTION_REQUIRED`.
 - Dependency-free validation and a deterministic fixture corpus for gate-integrity checks.
 
+## 0.2.1 Gate Integrity
+
+KimiQB 0.2.1 ports the CodexQB gate-integrity planner behavior into a Kimi Code plugin without copying Codex-only runtime surfaces. Public use stays Kimi-facing: install through Kimi Code plugins, invoke with `/skill:kimiqb`, keep planner helpers under `${KIMI_SKILL_DIR}`, and reload with `/plugins reload` or `/new` after updates.
+
+The 0.2.1 contract focuses on planner artifact quality:
+
+- required English headings for generated Planner-docs artifacts so validation is stable across user languages;
+- optional project comprehension checks for evidence, confidence, traceability, architecture reflexion, quality scenarios, and open hypotheses;
+- Ledger v2 continuity with legacy ledger compatibility;
+- Step 3 preflight validation before audit writing;
+- semantic Step 4 readiness gates, including `NO_ACTION_REQUIRED`;
+- unsafe target-path rejection and strict Step 4 migration rules;
+- deterministic fixture-corpus coverage for representative planning states.
+
 ## Workflow
 
 | Step | What KimiQB Does | Output |
@@ -111,6 +125,28 @@ Inside an extracted package without `.git/`, use:
 ```bash
 KIMIQB_VALIDATE_SKIP_UNITTESTS=1 make check
 ```
+
+## Maintainer Release Gates
+
+Before pushing a KimiQB release or syncing a managed plugin copy, run the local gates from the repository root:
+
+```bash
+python3 evals/run_fixture_corpus_checks.py
+python3 -m unittest discover -s tests -v
+make check
+git diff --check
+```
+
+For a distributable archive:
+
+```bash
+make export-sanitized
+tmpdir="$(mktemp -d)"
+unzip -q KimiQB-sanitized.zip -d "$tmpdir"
+(cd "$tmpdir/KimiQB" && KIMIQB_VALIDATE_SKIP_UNITTESTS=1 make check)
+```
+
+When using the local managed Kimi Code copy, reinstall or sync with cache excludes and then start a fresh Kimi session. The source checkout, sanitized archive, and managed copy should be treated as separate validation targets.
 
 ## Repository Layout
 
