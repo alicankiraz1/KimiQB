@@ -15,6 +15,7 @@ PUBLIC_FILES = {
     "docs/USAGE.md",
     "docs/MAINTAINING.md",
     "docs/INSTALLATION.md",
+    "docs/PUBLIC_RELEASE_AUDIT.md",
 }
 PUBLIC_DIRS = {
     "docs/release-audits",
