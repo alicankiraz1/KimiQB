@@ -35,9 +35,10 @@ The 0.3.0 contract focuses on planner artifact quality plus deterministic execut
 - Step 3 preflight validation before audit writing;
 - semantic Step 4 readiness gates, including `NO_ACTION_REQUIRED`;
 - unsafe target-path rejection and strict Step 4 migration rules;
-- canonical Kimi Code session prompt compilation via `session_run.py`;
-- gated direct or `kimi_session_serial` apply-run artifacts via `apply_run.py`;
-- deterministic fixture-corpus coverage for representative planning states.
+- canonical Kimi Code session prompt compilation via `session_run.py`, including `session_policy_digest`, strict validation checkpoints, stage-aware source snapshots, and selected READY queue scope;
+- gated direct or `kimi_session_serial` apply-run artifacts via `apply_run.py`, including `apply_policy_digest`, workspace baseline hashes, bounded task budgets, and contract-bound implementation drift checks;
+- verified Apply evidence requirements for `Review-Package.patch`, patch SHA-256, planned validation command IDs, and redacted output or artifact hashes;
+- deterministic fixture-corpus coverage for representative planning states, with session/apply smoke gates for artifact behavior.
 
 ## Workflow
 
@@ -68,6 +69,10 @@ python3 skills/kimiqb/scripts/apply_run.py prepare --root /path/to/project --mod
 ```
 
 These helpers create local artifacts only. They do not call Kimi Code, push, open pull requests, deploy, or mutate external systems.
+
+`Session-Run.json` records `session_policy_digest` so validation can recompute and reject tampered write, checkpoint, stop-gate, budget, and safety policy envelopes. Step 4 snapshots are scoped to the selected `READY` and `READY_WITH_WARNINGS` queue so unrelated deferred or unselected sub-plan edits do not break the active implementation batch.
+
+`Apply-Run.json` records `apply_policy_digest`, Git or non-Git workspace baseline hashes, untracked inventory hashes, task contract digests, validation command IDs, and budget metadata. VERIFIED tasks must line up with their Implementation Contract: changed files must be contract-bound, `Review-Package.patch` must be non-empty with the expected SHA-256, and validation evidence must reference planned command IDs plus redacted output or artifact hashes. New untracked files are accepted only when the exact path is declared in the Implementation Contract with `state: proposed`.
 
 ## Quick Start
 
@@ -172,6 +177,8 @@ unzip -q KimiQB-sanitized.zip -d "$tmpdir"
 ```
 
 When using the local managed Kimi Code copy, reinstall or sync with cache excludes and then start a fresh Kimi session. The source checkout, sanitized archive, and managed copy should be treated as separate validation targets.
+
+For a local managed install, Kimi Code loads the copied plugin from `$KIMI_CODE_HOME/plugins/managed/kimiqb` or `~/.kimi-code/plugins/managed/kimiqb`. After syncing that copy, run `/plugins reload` or start `/new`; otherwise Kimi Code may continue using the stale in-memory skill.
 
 ## Repository Layout
 
