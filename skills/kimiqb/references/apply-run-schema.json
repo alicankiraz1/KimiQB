@@ -1,0 +1,758 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kimiqb.local/schemas/apply-run-schema.json",
+  "title": "KimiQB Apply Run Artifact Contract",
+  "description": "Reference JSON Schema for KimiQB Step 4 apply-run artifacts. Runtime validation is implemented by scripts/apply_run.py; this file is the public packaged contract.",
+  "type": "object",
+  "anyOf": [
+    { "$ref": "#/$defs/ApplyRun" },
+    { "$ref": "#/$defs/Progress" },
+    { "$ref": "#/$defs/DispatchPacket" },
+    { "$ref": "#/$defs/AgentRun" },
+    { "$ref": "#/$defs/FinalReview" },
+    { "$ref": "#/$defs/Result" },
+    { "$ref": "#/$defs/ImplementerReport" },
+    { "$ref": "#/$defs/TaskReview" },
+    { "$ref": "#/$defs/FixReport" }
+  ],
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "IsoTimestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "TaskId": {
+      "type": "string",
+      "pattern": "^AR-apply-[A-Za-z0-9_.-]+-T[0-9]{3}$"
+    },
+    "AgentId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{3,160}$"
+    },
+    "ApplyMode": {
+      "enum": ["direct", "external_adapter", "no_action", "kimi_session_serial"]
+    },
+    "TaskState": {
+      "enum": [
+        "PREFLIGHT",
+        "BRIEFED",
+        "IMPLEMENTING",
+        "IMPLEMENTED",
+        "TASK_REVIEW",
+        "SECURITY_REVIEW",
+        "FIXING",
+        "RE_REVIEW",
+        "VERIFIED",
+        "BLOCKED",
+        "NEEDS_CONTEXT"
+      ]
+    },
+    "DispatchRole": {
+      "enum": ["fixer", "implementer", "security_reviewer", "task_reviewer"]
+    },
+    "AgentStatus": {
+      "enum": ["completed", "failed", "spawned"]
+    },
+    "PlannedValidationCommand": {
+      "type": "object",
+      "required": ["argv"],
+      "properties": {
+        "id": { "$ref": "#/$defs/NonEmptyString" },
+        "argv": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/NonEmptyString" }
+        },
+        "cwd": { "type": "string" },
+        "exit_code": { "type": "integer" },
+        "expected_exit_code": { "type": "integer" },
+        "timeout_seconds": { "type": "integer", "minimum": 1 },
+        "network": { "enum": ["allow", "deny", "live", "local"] },
+        "probe_tier": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "ValidationEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/PlannedValidationCommand" },
+        {
+          "type": "object",
+          "required": ["exit_code"],
+          "properties": {
+            "exit_code": { "type": "integer" },
+            "output_sha256": { "$ref": "#/$defs/Sha256" },
+            "stdout_sha256": { "$ref": "#/$defs/Sha256" },
+            "stderr_sha256": { "$ref": "#/$defs/Sha256" },
+            "combined_output_sha256": { "$ref": "#/$defs/Sha256" },
+            "artifact_sha256": { "$ref": "#/$defs/Sha256" }
+          },
+          "anyOf": [
+            { "required": ["output_sha256"] },
+            { "required": ["stdout_sha256"] },
+            { "required": ["stderr_sha256"] },
+            { "required": ["combined_output_sha256"] },
+            { "required": ["artifact_sha256"] }
+          ]
+        }
+      ]
+    },
+    "AgentProfile": {
+      "type": "object",
+      "required": ["agent_type", "model_profile", "sandbox"],
+      "properties": {
+        "agent_type": { "enum": ["default", "explorer", "worker"] },
+        "model_profile": { "enum": ["balanced", "fast", "inherit", "security_strong", "strong"] },
+        "sandbox": { "enum": ["read-only", "workspace-write"] }
+      },
+      "additionalProperties": false
+    },
+    "BudgetContract": {
+      "type": "object",
+      "required": [
+        "budget_schema_version",
+        "soft_input_token_limit",
+        "hard_total_token_limit",
+        "max_subagent_total_tokens",
+        "max_agent_attempts_per_role",
+        "max_fix_cycles",
+        "max_selected_tasks",
+        "checkpoint_after_tasks",
+        "pause_on_soft_limit",
+        "enforcement_mode"
+      ],
+      "properties": {
+        "budget_schema_version": { "const": 1 },
+        "soft_input_token_limit": { "type": "integer", "minimum": 1, "maximum": 10000000 },
+        "hard_total_token_limit": { "type": "integer", "minimum": 1, "maximum": 10000000 },
+        "max_subagent_total_tokens": { "type": "integer", "minimum": 0, "maximum": 10000000 },
+        "max_agent_attempts_per_role": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "max_fix_cycles": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "max_selected_tasks": { "type": "integer", "minimum": 0, "maximum": 50 },
+        "checkpoint_after_tasks": { "type": "integer", "minimum": 1, "maximum": 50 },
+        "pause_on_soft_limit": { "const": true },
+        "enforcement_mode": { "const": "advisory_or_runtime_supported" }
+      },
+      "additionalProperties": false
+    },
+    "TokenUsage": {
+      "type": "object",
+      "required": ["status", "input_tokens", "output_tokens", "total_tokens", "source"],
+      "properties": {
+        "status": { "enum": ["not_observed", "observed"] },
+        "input_tokens": {
+          "anyOf": [{ "type": "integer", "minimum": 0 }, { "const": "not_observed" }]
+        },
+        "output_tokens": {
+          "anyOf": [{ "type": "integer", "minimum": 0 }, { "const": "not_observed" }]
+        },
+        "total_tokens": {
+          "anyOf": [{ "type": "integer", "minimum": 0 }, { "const": "not_observed" }]
+        },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "SourceSnapshotItem": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/NonEmptyString" },
+        "sha256": { "$ref": "#/$defs/Sha256" },
+        "value": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "WorkspaceBaseline": {
+      "type": "object",
+      "required": [
+        "vcs",
+        "branch",
+        "base_commit",
+        "git_status_porcelain_sha256",
+        "staged_diff_sha256",
+        "unstaged_diff_sha256",
+        "untracked_inventory_sha256",
+        "untracked_count",
+        "workspace_file_inventory_sha256",
+        "workspace_file_count"
+      ],
+      "properties": {
+        "vcs": { "enum": ["git", "non_git"] },
+        "branch": { "type": "string" },
+        "base_commit": { "type": "string" },
+        "git_status_porcelain_sha256": { "$ref": "#/$defs/Sha256" },
+        "staged_diff_sha256": { "$ref": "#/$defs/Sha256" },
+        "unstaged_diff_sha256": { "$ref": "#/$defs/Sha256" },
+        "untracked_inventory_sha256": { "$ref": "#/$defs/Sha256" },
+        "untracked_count": { "type": "integer", "minimum": 0 },
+        "workspace_file_inventory_sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/Sha256" },
+            { "const": "" }
+          ]
+        },
+        "workspace_file_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "ReadyQueueItem": {
+      "type": "object",
+      "required": ["readiness_status", "subplan_path"],
+      "properties": {
+        "readiness_status": { "enum": ["READY", "READY_WITH_WARNINGS"] },
+        "subplan_path": {
+          "type": "string",
+          "pattern": "^Planner-docs/Faz-[0-9]+-Plans/Faz[0-9]+\\.[0-9]+-[a-z0-9-]+\\.md$"
+        },
+        "finding_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "dependency_state": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "ApplyRun": {
+      "type": "object",
+      "required": [
+        "apply_run_schema_version",
+        "artifact_schema_version",
+        "handoff_contract_version",
+        "plugin_version",
+        "apply_requested_mode",
+        "apply_spec_id",
+        "apply_spec_digest",
+        "apply_policy_digest",
+        "apply_spec_inputs",
+        "apply_run_id",
+        "apply_run_invocation_id",
+        "mode",
+        "workspace_requested",
+        "workspace_detected",
+        "workspace_verified",
+        "workspace_mode",
+        "workspace_baseline",
+        "worktree_path",
+        "base_branch",
+        "working_branch",
+        "dirty_state",
+        "user_approval",
+        "commit_policy",
+        "push_allowed",
+        "pr_allowed",
+        "max_writer_agents",
+        "max_subagent_depth",
+        "budget_contract",
+        "token_usage",
+        "agent_profiles",
+        "source_snapshot",
+        "source_snapshot_digest",
+        "step4_readiness",
+        "external_adapter",
+        "safety"
+      ],
+      "properties": {
+        "apply_run_schema_version": { "const": 1 },
+        "artifact_schema_version": { "const": 3 },
+        "handoff_contract_version": { "const": 2 },
+        "plugin_version": { "const": "0.3.0" },
+        "apply_requested_mode": { "$ref": "#/$defs/ApplyMode" },
+        "apply_spec_id": {
+          "type": "string",
+          "pattern": "^apply-spec-(direct|external_adapter|no_action|kimi_session_serial)-[a-f0-9]{16}$"
+        },
+        "apply_spec_digest": { "$ref": "#/$defs/Sha256" },
+        "apply_policy_digest": { "$ref": "#/$defs/Sha256" },
+        "apply_spec_inputs": {
+          "type": "object",
+          "required": ["ready_queue", "workspace_baseline"],
+          "properties": {
+            "ready_queue": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/ReadyQueueItem" }
+            },
+            "workspace_baseline": { "$ref": "#/$defs/WorkspaceBaseline" }
+          },
+          "additionalProperties": true
+        },
+        "apply_run_id": {
+          "type": "string",
+          "pattern": "^apply-(direct|external_adapter|no_action|kimi_session_serial)-[a-f0-9]{12}-[A-Za-z0-9_.-]+$"
+        },
+        "apply_run_invocation_id": { "$ref": "#/$defs/NonEmptyString" },
+        "mode": { "$ref": "#/$defs/ApplyMode" },
+        "workspace_requested": { "type": "string" },
+        "workspace_detected": { "type": "string" },
+        "workspace_verified": { "type": "boolean" },
+        "workspace_mode": { "enum": ["non_git_unsafe", "unverified_current_worktree", "verified_isolated_worktree"] },
+        "worktree_path": { "type": "string" },
+        "base_branch": { "type": "string" },
+        "working_branch": { "type": "string" },
+        "dirty_state": { "enum": ["clean", "dirty", "non_git", "unknown"] },
+        "user_approval": { "type": "boolean" },
+        "workspace_baseline": { "$ref": "#/$defs/WorkspaceBaseline" },
+        "commit_policy": { "const": "none" },
+        "push_allowed": { "const": false },
+        "pr_allowed": { "const": false },
+        "max_writer_agents": { "const": 1 },
+        "max_subagent_depth": { "const": 1 },
+        "budget_contract": { "$ref": "#/$defs/BudgetContract" },
+        "token_usage": { "$ref": "#/$defs/TokenUsage" },
+        "agent_profiles": {
+          "type": "object",
+          "required": [
+            "controller",
+            "explorer",
+            "implementer",
+            "task_reviewer",
+            "security_reviewer",
+            "fixer",
+            "final_reviewer"
+          ],
+          "properties": {
+            "controller": { "$ref": "#/$defs/AgentProfile" },
+            "explorer": { "$ref": "#/$defs/AgentProfile" },
+            "implementer": { "$ref": "#/$defs/AgentProfile" },
+            "task_reviewer": { "$ref": "#/$defs/AgentProfile" },
+            "security_reviewer": { "$ref": "#/$defs/AgentProfile" },
+            "fixer": { "$ref": "#/$defs/AgentProfile" },
+            "final_reviewer": { "$ref": "#/$defs/AgentProfile" }
+          },
+          "additionalProperties": false
+        },
+        "source_snapshot": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/SourceSnapshotItem" }
+        },
+        "source_snapshot_digest": { "$ref": "#/$defs/Sha256" },
+        "step4_readiness": {
+          "type": "object",
+          "required": [
+            "audit_path",
+            "audit_present",
+            "ready_queue_count",
+            "validator_command",
+            "validator_status",
+            "validator_output_sha256",
+            "execution_queue_state",
+            "execution_gate",
+            "mode"
+          ],
+          "properties": {
+            "audit_path": { "const": "Planner-docs/Sub-Planing-Audit.md" },
+            "audit_present": { "type": "boolean" },
+            "ready_queue_count": { "type": "integer", "minimum": 0 },
+            "no_action_required": { "type": "boolean" },
+            "validator_command": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/NonEmptyString" }
+            },
+            "validator_status": { "type": "string" },
+            "validator_output_sha256": { "$ref": "#/$defs/Sha256" },
+            "execution_queue_state": { "enum": ["BLOCKED", "NO_ACTION_REQUIRED", "READY", "unknown"] },
+            "execution_gate": { "const": "step4_validator_must_pass_before_product_changes" },
+            "mode": { "$ref": "#/$defs/ApplyMode" }
+          },
+          "additionalProperties": true
+        },
+        "external_adapter": {
+          "type": "object",
+          "required": ["required", "availability", "fallback_mode", "adapter_policy"],
+          "properties": {
+            "required": { "type": "boolean" },
+            "availability": { "enum": ["available", "not_checked", "unavailable"] },
+            "fallback_mode": { "const": "kimi_session_serial" },
+            "adapter_policy": { "type": "string" },
+            "reconciled_to": { "const": "kimi_session_serial" },
+            "version": { "type": "string" },
+            "source_path": { "type": "string" },
+            "license_acknowledged": { "type": "boolean" }
+          },
+          "additionalProperties": true
+        },
+        "safety": {
+          "type": "object",
+          "required": [
+            "executes_implementation",
+            "allows_commit_push_pr_deploy",
+            "one_writer_per_slice",
+            "subagents_read_only_by_default"
+          ],
+          "properties": {
+            "executes_implementation": { "const": false },
+            "allows_commit_push_pr_deploy": { "const": false },
+            "one_writer_per_slice": { "const": true },
+            "subagents_read_only_by_default": { "const": true }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "Task": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "state",
+        "readiness_status",
+        "writer_lock",
+        "validation_commands",
+        "validation_command_ids",
+        "implementation_contract",
+        "implementation_contract_digest",
+        "task_contract_digest",
+        "dispatch",
+        "agent_runs"
+      ],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/TaskId" },
+        "state": { "$ref": "#/$defs/TaskState" },
+        "readiness_status": { "enum": ["READY", "READY_WITH_WARNINGS"] },
+        "source_subplan_path": { "type": ["string", "null"] },
+        "source_subplan_sha256": { "anyOf": [{ "$ref": "#/$defs/Sha256" }, { "type": "null" }] },
+        "fresh_context_contract": { "type": "object" },
+        "implementation_contract": { "type": "object" },
+        "implementation_contract_digest": { "anyOf": [{ "$ref": "#/$defs/Sha256" }, { "type": "null" }] },
+        "task_contract_digest": { "$ref": "#/$defs/Sha256" },
+        "parent_acceptance_signal_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_class": { "type": "string" },
+        "risk_domains": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "finding_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "security_review_required": { "type": "boolean" },
+        "writer_lock": {
+          "anyOf": [{ "$ref": "#/$defs/WriterLock" }, { "type": "null" }]
+        },
+        "validation_commands": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PlannedValidationCommand" }
+        },
+        "validation_command_ids": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^VAL-[A-Za-z0-9_.:-]+$" }
+        },
+        "dispatch": {
+          "anyOf": [{ "$ref": "#/$defs/DispatchState" }, { "type": "null" }]
+        },
+        "agent_runs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AgentRun" }
+        },
+        "redispatch_count": { "type": "integer", "minimum": 0 },
+        "fix_cycle_count": { "type": "integer", "minimum": 0 },
+        "brief_sha256": { "$ref": "#/$defs/Sha256" }
+      },
+      "additionalProperties": true
+    },
+    "WriterLock": {
+      "type": "object",
+      "required": ["lock_id", "task_id", "owner", "acquired_at", "expires_in_seconds"],
+      "properties": {
+        "lock_id": { "type": "string", "pattern": "^[a-f0-9]{16}$" },
+        "task_id": { "$ref": "#/$defs/TaskId" },
+        "owner": { "$ref": "#/$defs/NonEmptyString" },
+        "acquired_at": { "$ref": "#/$defs/IsoTimestamp" },
+        "expires_in_seconds": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "DispatchState": {
+      "type": "object",
+      "required": ["status", "role", "spawn_tool", "prompt_sha256", "packet_sha256", "attempt", "event_sequence"],
+      "properties": {
+        "status": { "enum": ["completed", "failed", "packet_ready", "spawned"] },
+        "role": { "$ref": "#/$defs/DispatchRole" },
+        "spawn_tool": { "const": "kimi_session_dispatch_artifact" },
+        "prompt_sha256": { "$ref": "#/$defs/Sha256" },
+        "packet_sha256": { "$ref": "#/$defs/Sha256" },
+        "attempt": { "type": "integer", "minimum": 1 },
+        "event_sequence": { "type": "integer", "minimum": 1 },
+        "agent_id": { "$ref": "#/$defs/AgentId" },
+        "updated_at": { "$ref": "#/$defs/IsoTimestamp" },
+        "summary": { "type": "string" },
+        "failure_recoverable": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "Progress": {
+      "type": "object",
+      "required": [
+        "apply_run_id",
+        "mode",
+        "tasks",
+        "verified_task_ids",
+        "active_writer_locks",
+        "final_review_required",
+        "final_review_complete",
+        "resume_cursor",
+        "events"
+      ],
+      "properties": {
+        "apply_run_id": {
+          "type": "string",
+          "pattern": "^apply-(direct|external_adapter|no_action|kimi_session_serial)-[a-f0-9]{12}-[A-Za-z0-9_.-]+$"
+        },
+        "mode": { "$ref": "#/$defs/ApplyMode" },
+        "tasks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Task" }
+        },
+        "verified_task_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/TaskId" }
+        },
+        "active_writer_locks": {
+          "type": "array",
+          "maxItems": 1,
+          "items": { "$ref": "#/$defs/WriterLock" }
+        },
+        "final_review_required": { "type": "boolean" },
+        "final_review_complete": { "type": "boolean" },
+        "resume_cursor": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": ["task_id", "state", "event_sequence"],
+              "properties": {
+                "task_id": { "$ref": "#/$defs/TaskId" },
+                "state": { "$ref": "#/$defs/TaskState" },
+                "event_sequence": { "type": "integer", "minimum": 1 }
+              },
+              "additionalProperties": true
+            },
+            { "type": "null" }
+          ]
+        },
+        "events": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "DispatchPacket": {
+      "type": "object",
+      "required": [
+        "dispatch_packet_schema_version",
+        "task_id",
+        "role",
+        "attempt",
+        "dispatch_status",
+        "spawn_tool",
+        "spawn_request",
+        "model_profile",
+        "model_override",
+        "sandbox",
+        "source_subplan_path",
+        "source_subplan_sha256",
+        "implementation_contract_digest",
+        "task_contract_digest",
+        "brief_sha256",
+        "prompt_sha256",
+        "run_relative_task_dir",
+        "expected_report_paths",
+        "prepared_by",
+        "prepared_at"
+      ],
+      "properties": {
+        "dispatch_packet_schema_version": { "const": 1 },
+        "task_id": { "$ref": "#/$defs/TaskId" },
+        "role": { "$ref": "#/$defs/DispatchRole" },
+        "attempt": { "type": "integer", "minimum": 1 },
+        "dispatch_status": { "const": "packet_ready" },
+        "spawn_tool": { "const": "kimi_session_dispatch_artifact" },
+        "spawn_request": {
+          "type": "object",
+          "required": ["agent_type", "fork_context", "message"],
+          "properties": {
+            "agent_type": { "enum": ["default", "worker"] },
+            "fork_context": { "const": false },
+            "message": { "$ref": "#/$defs/NonEmptyString" }
+          },
+          "additionalProperties": false
+        },
+        "model_profile": { "enum": ["balanced", "security_strong", "strong"] },
+        "model_override": { "type": "null" },
+        "sandbox": { "enum": ["read-only", "workspace-write"] },
+        "source_subplan_path": { "type": ["string", "null"] },
+        "source_subplan_sha256": { "anyOf": [{ "$ref": "#/$defs/Sha256" }, { "type": "null" }] },
+        "implementation_contract_digest": { "anyOf": [{ "$ref": "#/$defs/Sha256" }, { "type": "null" }] },
+        "task_contract_digest": { "$ref": "#/$defs/Sha256" },
+        "brief_sha256": { "$ref": "#/$defs/Sha256" },
+        "prompt_sha256": { "$ref": "#/$defs/Sha256" },
+        "run_relative_task_dir": { "$ref": "#/$defs/TaskId" },
+        "expected_report_paths": {
+          "type": "object",
+          "required": ["implementer", "task_reviewer", "security_reviewer", "fixer"],
+          "properties": {
+            "implementer": { "const": "Implementer-Report.json" },
+            "task_reviewer": { "const": "Task-Review.json" },
+            "security_reviewer": { "const": "Task-Review.json" },
+            "fixer": { "const": "Fix-Report.json" }
+          },
+          "additionalProperties": false
+        },
+        "prepared_by": { "$ref": "#/$defs/NonEmptyString" },
+        "prepared_at": { "$ref": "#/$defs/IsoTimestamp" }
+      },
+      "additionalProperties": false
+    },
+    "AgentRun": {
+      "type": "object",
+      "required": ["task_id", "role", "attempt", "agent_id", "status", "packet_sha256", "prompt_sha256", "spawn_tool", "summary"],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/TaskId" },
+        "role": { "$ref": "#/$defs/DispatchRole" },
+        "attempt": { "type": "integer", "minimum": 1 },
+        "agent_id": { "$ref": "#/$defs/AgentId" },
+        "status": { "$ref": "#/$defs/AgentStatus" },
+        "packet_sha256": { "$ref": "#/$defs/Sha256" },
+        "prompt_sha256": { "$ref": "#/$defs/Sha256" },
+        "spawn_tool": { "const": "kimi_session_dispatch_artifact" },
+        "summary": { "type": "string" },
+        "spawned_at": { "$ref": "#/$defs/IsoTimestamp" },
+        "completed_at": { "$ref": "#/$defs/IsoTimestamp" },
+        "failed_at": { "$ref": "#/$defs/IsoTimestamp" }
+      },
+      "additionalProperties": false
+    },
+    "ImplementerReport": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["BLOCKED", "DONE", "DONE_WITH_CONCERNS", "NEEDS_CONTEXT", "PENDING"] },
+        "task_id": { "$ref": "#/$defs/TaskId" },
+        "brief_sha256": { "$ref": "#/$defs/Sha256" },
+        "implementation_contract_digest": { "anyOf": [{ "$ref": "#/$defs/Sha256" }, { "type": "null" }] },
+        "task_contract_digest": { "$ref": "#/$defs/Sha256" },
+        "implementer_agent_id": { "$ref": "#/$defs/AgentId" },
+        "files_changed": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "validation_evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ValidationEvidence" }
+        },
+        "diff_sha256": { "$ref": "#/$defs/Sha256" },
+        "controller_decision": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "TaskReview": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["PENDING"] },
+        "task_id": { "$ref": "#/$defs/TaskId" },
+        "brief_sha256": { "$ref": "#/$defs/Sha256" },
+        "implementation_contract_digest": { "anyOf": [{ "$ref": "#/$defs/Sha256" }, { "type": "null" }] },
+        "task_contract_digest": { "$ref": "#/$defs/Sha256" },
+        "reviewer_agent_id": { "$ref": "#/$defs/AgentId" },
+        "security_reviewer_agent_id": { "$ref": "#/$defs/AgentId" },
+        "spec_compliance": { "enum": ["cannot_verify", "fail", "pass", "PENDING"] },
+        "task_quality": { "enum": ["approved", "needs_fixes", "PENDING"] },
+        "security_review": { "enum": ["fail", "not_required", "pass", "PENDING"] },
+        "blocking_findings": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "fixes_required": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "re_review_required": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "FixReport": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["PENDING"] },
+        "fixes": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "object", "additionalProperties": true }
+            ]
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "FinalReview": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["not_required", "not_started", "pass"] },
+        "reviewed_task_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/TaskId" }
+        },
+        "global_validations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ValidationEvidence" }
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "Result": {
+      "type": "object",
+      "required": [
+        "apply_run_id",
+        "status",
+        "completed_tasks",
+        "blocked_tasks",
+        "budget_contract",
+        "token_usage",
+        "next_action"
+      ],
+      "properties": {
+        "apply_run_id": {
+          "type": "string",
+          "pattern": "^apply-(direct|external_adapter|no_action|kimi_session_serial)-[a-f0-9]{12}-[A-Za-z0-9_.-]+$"
+        },
+        "status": { "enum": ["complete", "initialized", "no_action"] },
+        "completed_tasks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/TaskId" }
+        },
+        "blocked_tasks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/TaskId" }
+        },
+        "budget_contract": { "$ref": "#/$defs/BudgetContract" },
+        "token_usage": { "$ref": "#/$defs/TokenUsage" },
+        "finalized_at": { "$ref": "#/$defs/IsoTimestamp" },
+        "finalized_by": { "type": "string" },
+        "event_sequence": { "type": "integer", "minimum": 1 },
+        "next_action": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}
