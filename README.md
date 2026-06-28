@@ -42,6 +42,8 @@ The 0.3.0 contract focuses on planner artifact quality plus deterministic execut
 
 ## Workflow
 
+![KimiQB source-bound repo planning workflow and release validation](docs/assets/kimiqb-workflow.png)
+
 | Step | What KimiQB Does | Output |
 | --- | --- | --- |
 | 1. Repo Scan + Main Plan | Reads repo evidence and optional continuity docs, asks four intake questions, then creates the master plan. | `Planner-docs/Main-Planing.md` |
